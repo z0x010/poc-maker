@@ -1,0 +1,19 @@
+appname    := 
+appversion := 
+appvendor  := 
+
+vulid      := 
+vulpath    := 
+vultype    := 
+vulreferer := 
+vuldesc    :=
+vuleffect  := 
+# 漏洞公布日期
+vuldate    := 
+
+
+tools      := sqlmap
+tooldesc   := SQL注入测试工具
+
+myname     := 
+shortname  := 
