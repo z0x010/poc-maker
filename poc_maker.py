@@ -9,6 +9,7 @@ import shutil
 import zipfile
 import tempfile
 
+from weekdays import weekdays
 from lxml import etree
 from datetime import date
 from os.path import splitext, basename
@@ -224,6 +225,13 @@ def poc_template_name():
 def comm_path():
     return os.path.join(cur_file_dir(), 'template/comm')
 
+def check_weekdays():
+    dirname = weekdays()
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
+
+
 if __name__ == "__main__":
     output_path = r''
     words = {}
@@ -243,3 +251,4 @@ if __name__ == "__main__":
     write_and_close_docx(xml_tree, doc_name)
     poc_maker(poc_name, words)
     file_put_dir(poc_name, doc_name)
+    check_weekdays()
