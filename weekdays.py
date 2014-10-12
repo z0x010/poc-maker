@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import datetime
 import calendar
 
@@ -32,11 +33,17 @@ def weekdays():
         friday = n_friday
     else:
         friday = l_friday
-    return str(monday).replace('-', '/') + '-' + str(friday).replace('-', '/')
+    return str(monday).replace('-', ':') + '-' + str(friday).replace('-', ':') # ':' is '/'  mac os
     
 
+def make_dir(dirname):
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
 def main():
-    print weekdays()
+    dirname = weekdays()
+    print dirname
+    make_dir(dirname)
 
 if __name__ == '__main__':
     main()
