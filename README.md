@@ -9,7 +9,7 @@ poc maker
 ### Example
 * poc_info.txt填入info
 * python poc_maker.py
-* 可以用clean_info.py ,清空poc_info.txt,避免忘记修改某些...
+* poc_clean_info.py ,清空poc_info.txt,避免忘记修改某些...
 * report_maker.py 生成周报
 
 
