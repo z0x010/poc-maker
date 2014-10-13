@@ -4,7 +4,7 @@
 
 import re
 import sys
-import urllib
+import requests
 from bs4 import BeautifulSoup
 
 info_temp = u"""appname    := 
@@ -54,33 +54,45 @@ def generate_info(template, context):
     return content
 
 sql_list = [u'SQL Injection', u'SQL注射']
+file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
 
 def read_info_content(url):
     print '[*] read info from ' + url
-    content = urllib.urlopen(url).read()
-    soup = BeautifulSoup(content)
-    print SITE
+    content = requests.get(url).content
     if SITE == 'wooyun':
+        soup = BeautifulSoup(content)
         info_list = soup.find("div", class_="content").find_all("h3")
     elif SITE == 'exp-db':
-        pass
+        info_list = content.split('\n')
     return info_list
 
 def read_vultype(info):
     vultype = u''
     if SITE == 'wooyun':
         title_info = info[5].string
+        print title_info
         for sql_key in sql_list:
             if sql_key in title_info:
                 vultype = sql_list[0]
+                return vultype
+        for file_down_key in file_down_list:
+            if file_down_key in title_info:
+                vultype = file_down_list[0]
+                return vultype
     elif SITE == 'exp-db':
-        pass
+        if 'multi' in info.lower():
+            print '[-] can\'t read multiple vultype'
+            sys.exit(0)
+        for sql_key in sql_list:
+            if sql_key in info:
+                vultype = sql_list[0]
+                return vultype
     return vultype
 
 def read_vulvendor(info):
     if SITE == 'wooyun':
         vendor_info = info[2].a.get("href").encode("utf-8")
-        content = urllib.urlopen(vendor_info).read()
+        content = requests.get(vendor_info).content
         soup = BeautifulSoup(content)
         url_info = soup.find("div", class_="content").h3.string
         vulvendor = re.search('http.*', url_info).group(0)
@@ -97,8 +109,11 @@ def read_vuldate(info):
     return vuldate
 
 def read_vuleffect(vultype):
+    vuleffect = u''
     if vultype == 'SQL Injection':
         vuleffect = u'SQL注入,泄露信息'
+    if vultype == 'Arbitrary File Download':
+        vuleffect = u'任意文件下载,泄露信息'
     return vuleffect
 
 def check_site(url):
@@ -108,7 +123,7 @@ def check_site(url):
         read_from_wooyun(url)
     elif 'exploit-db' in url:
         SITE = 'exp-db'
-        print 'exp-db'
+        read_from_expdb(url)
 
 def read_from_wooyun(url):
     info = read_info_content(url)
@@ -122,6 +137,21 @@ def read_from_wooyun(url):
     info_words['vuldate'] = vuldate
     info_words['vulreferer'] = url
     info_words['vuleffect'] = vuleffect
+
+def read_expdb_title(url):
+    title_info = requests.get(url).content
+    return title_info
+
+def trans_expdb_info_url(url):
+    return url.replace('exploits', 'download')
+
+def read_from_expdb(url):
+    title_info = read_expdb_title(url)
+    vultype = read_vultype(title_info)
+    info_url = trans_expdb_info_url(url)
+    info = read_info_content(info_url)
+
+    info_words['vultype'] = vultype
 
 def clean_info():
     f = open('poc_info.txt', 'w')
