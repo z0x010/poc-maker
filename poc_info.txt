@@ -9,11 +9,11 @@ vulreferer :=
 vuldesc    :=
 vuleffect  := 
 # 漏洞公布日期
-vuldate    := 
+vuldate    := 2014-09-
 
 
-tools      := sqlmap
-tooldesc   := SQL注入测试工具
+tools      := Firefox
+tooldesc   := 浏览器
 
 myname     := 
 shortname  := 
