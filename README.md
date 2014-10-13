@@ -23,4 +23,5 @@ poc maker
 * 4.clea_info.py 新增从wooyun url提取几条信息(有限信息,正在进行...)
 * 5.增加weekdays.py 用于生成工作日期(poc_maker.py使用weekdays生成日期目录)
 * 6.增加report_maker.py 用于生成周报(通过日期目录下的poc信息)
+* 7.增加支持新框架模板(new_poc_template)
 
