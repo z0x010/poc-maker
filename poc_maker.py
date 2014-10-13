@@ -189,8 +189,8 @@ def file_put_dir(poc_name, doc_name):
     print '[*] makeing ' + poc_filename
     shutil.move(doc_filename, doc_name)
     shutil.move(poc_filename, doc_name)
-    shutil.copytree(comm_path(), 'comm')
-    shutil.move('comm', doc_name)
+    # shutil.copytree(comm_path(), 'comm')
+    # shutil.move('comm', doc_name)
     print '[+] poc_maker have finished'
 
 
@@ -220,7 +220,7 @@ def doc_template_name():
 
 
 def poc_template_name():
-    return os.path.join(cur_file_dir(), 'template/poc_template.txt')
+    return os.path.join(cur_file_dir(), 'template/new_poc_template.txt')
 
 def comm_path():
     return os.path.join(cur_file_dir(), 'template/comm')
