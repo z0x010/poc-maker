@@ -71,8 +71,11 @@ def read_info_content(url):
 
 def read_vultype(info):
     vultype = u''
-    if SITE == 'wooyun': # 存在修复时间条目,读取不到type,带修复
+    if SITE == 'wooyun': # 存在修复时间条目,读取不到type,带修复 fixed
         title_info = info[5].string
+        if u'修复时间' in title_info:
+            title_info = info[6].string
+
         for sql_key in sql_list:
             if sql_key in title_info:
                 vultype = sql_list[0]
