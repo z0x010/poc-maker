@@ -11,10 +11,11 @@ def make_report():
     pocs = []
     if os.path.exists(dirname):
         pocs = os.listdir(dirname)
+    pocs.remove('.DS_Store')
 
     week_job = ['\n本周工作\n']
     for index, pocname in enumerate(pocs):
-        week_job.append(str(index + 1) + '.' + pocname + ' POC+文档  [已经完成]')
+        week_job.append(str(index + 1) + '.' + pocname + ' POC+文档  [已经完成]\n')
 
     week_job.append('\n\n下周工作\n继续wsl工作')
     week_job.append('\n\n唧唧歪歪')
