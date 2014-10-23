@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-from weekdays import weekdays
+from utils.weekdays import weekdays
 
 MYNAME = '[flsf]'
 

@@ -9,10 +9,11 @@ import shutil
 import zipfile
 import tempfile
 
-from weekdays import weekdays
 from lxml import etree
 from datetime import date
 from os.path import splitext, basename
+
+from utils.weekdays import weekdays
 
 
 def multiple_replace(text, adict):
