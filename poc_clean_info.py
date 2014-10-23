@@ -5,17 +5,18 @@
 import re
 import sys
 import requests
+import argparse
 from bs4 import BeautifulSoup
 
-info_temp = u"""appname    := 
+info_temp = u"""appname    := {{ appname }}
 appversion := 
 appvendor  := {{ vulvendor }}
 
-vulid      := 
+vulid      := {{ vulid }}
 vulpath    := 
 vultype    := {{ vultype }}
 vulreferer := {{ vulreferer }}
-vuldesc    :=
+vuldesc    := {{ vuldesc }}
 vuleffect  := {{ vuleffect }}
 # 漏洞公布日期
 vuldate    := {{ vuldate }}
@@ -28,15 +29,16 @@ myname     := {{ myname }}
 shortname  := {{ shortname }}
 """
 
+
 MYNAME = u''
 SHORTNAME = u''
-TOOLS = u'Firefox'
-TOOLSDESC = u'浏览器'
 VULDATE = u'2014-09-'
 
-SITE = ''
 
-info_words = {'vuldate': VULDATE, 'vuleffect': '', 'vultype': '', 'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': TOOLS, 'toolsdesc': TOOLSDESC, 'myname': MYNAME, 'shortname': SHORTNAME}
+
+
+SITE = ''
+info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '', 'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
@@ -60,6 +62,7 @@ def generate_info(template, context):
 
 
 def read_info_content(url):
+    print 
     print '[*] read info from ' + url
     content = requests.get(url).content
     if SITE == 'wooyun':
@@ -125,17 +128,7 @@ def read_vuldate(info):
         pass
     return vuldate
 
-def read_vuleffect(vultype):
-    vuleffect = ''
-    if vultype == 'SQL Injection':
-        vuleffect = u'SQL注入,泄露信息'
-    elif vultype == 'Arbitrary File Download':
-        vuleffect = u'任意文件下载,泄露信息'
-    elif vultype == 'Login Bypass':
-        vuleffect = u'登录绕过,权限绕过,非授权访问'
-    elif vultype == 'File Upload':
-        vuleffect = u'文件上传导致代码执行'
-    return vuleffect
+
 
 def check_site(url):
     global SITE
@@ -151,7 +144,7 @@ def read_from_wooyun(url):
     vultype = read_vultype(info)
     vulvendor = read_vulvendor(info)
     vuldate = read_vuldate(info)
-    vuleffect = read_vuleffect(vultype)
+    vuleffect = trans_vuleffect(vultype)
     vulreferer = url
     info_words['vultype'] = vultype
     info_words['vulvendor'] = vulvendor
@@ -174,21 +167,74 @@ def read_from_expdb(url):
 
     info_words['vultype'] = vultype
 
-def clean_info():
+def clean_info(args):
+    if args.appname:
+        info_words['appname'] = args.appname
+    if args.vultype:
+        info_words['vultype'] = trans_vultype(args.vultype)
+        info_words['vuleffect'] = trans_vuleffect(info_words['vultype'])
+    if args.vulid:
+        id = args.vulid
+        if len(id) == 3:
+            id = '0' + id
+        info_words['vulid'] = id
+    if args.vultool:
+        info_words['tools'] = args.vultool
+        info_words['toolsdesc'] = trans_tools(args.vultool)
+    if args.vuldesc:
+        info_words['vuldesc'] = args.vuldesc.decode('utf-8')
+
     f = open('poc_info.txt', 'w')
     info = generate_info(info_temp, info_words)
     print info
     f.write(info.encode('utf-8'))
     f.close()
-    print '[+] poc_info cleared.'
+    print '[+] finished clean.'
+
+def trans_tools(tool):
+    key_dic = {
+        'sqlmap': u'SQL注入测试工具',
+        'firefox': u'浏览器',
+    }
+    return key_dic.get(tool.lower(), '')
+
+
+def trans_vultype(vultype):
+    key_dic = {
+        'sqli': 'SQL Injection',
+        'fileupload': 'File Upload',
+        'upload': 'File Upload',
+        'loginbypass': 'Login Bypass',
+        'filedownload': 'Arbitrary File Download',
+        'filedown': 'Arbitrary File Download',
+    }
+    return key_dic.get(vultype, '')
+
+
+def trans_vuleffect(vultype):
+    key_dic = {
+        'SQL Injection': u'SQL注入,泄露信息',
+        'Arbitrary File Download': u'任意文件下载,泄露信息',
+        'Login Bypass': u'登录绕过,权限绕过,非授权访问',
+        'File Upload': u'文件上传导致代码执行',
+    }
+    return key_dic.get(vultype, '')
 
 
 def main():
-    if len(sys.argv) > 1:
-        url = sys.argv[1]
+    parser = argparse.ArgumentParser()   
+    parser.add_argument('-u', '--vulurl', help='Vulnerability Refer url eg. -u http://wooyun.org/bugs/wooyun-2014-073369')
+    parser.add_argument('-t', '--vultype', help='Vulnerability Type eg. -t sqli')
+    parser.add_argument('-i', '--vulid', help='Vulnerability ID eg. -i 111   id自动补全4位,变为0111')
+    parser.add_argument('-o', '--vultool', default='Firefox', help='tools eg.sqlmap or Firefox')
+    parser.add_argument('-s', '--vuldesc', help='Vulnerability description')
+    parser.add_argument('-n', '--appname', help='app name eg. wordpress')
+    args = parser.parse_args()
+    if args.vulurl:
+        url = args.vulurl
         check_site(url)
 
-    clean_info()
+    clean_info(args)
 
 if __name__ == "__main__":
     main()
