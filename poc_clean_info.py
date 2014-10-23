@@ -35,15 +35,15 @@ SHORTNAME = u''
 VULDATE = u'2014-09-'
 
 
-
-
 SITE = ''
-info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '', 'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME}
+info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
+              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
 bypass_list = [u'Login Bypass', u'权限绕过']
 upload_list = [u'File Upload', u'上传导致']
+
 
 def extract_vars(template):
     keys = set()
@@ -62,7 +62,7 @@ def generate_info(template, context):
 
 
 def read_info_content(url):
-    print 
+    print
     print '[*] read info from ' + url
     content = requests.get(url).content
     if SITE == 'wooyun':
@@ -72,10 +72,11 @@ def read_info_content(url):
         info_list = content.split('\n')
     return info_list
 
+
 def read_vultype(info):
     vultype = u''
-    if SITE == 'wooyun': # 存在修复时间条目,读取不到type,待修复 fixed
-        title_info = info[5].string # 完全公开存在公开时间,读取不到type,待修复,fixed
+    if SITE == 'wooyun':  # 存在修复时间条目,读取不到type,待修复 fixed
+        title_info = info[5].string  # 完全公开存在公开时间,读取不到type,待修复,fixed
         if (u'修复时间' in title_info) or (u'公开时间' in title_info):
             title_info = info[6].string
 
@@ -106,6 +107,7 @@ def read_vultype(info):
                 return vultype
     return vultype
 
+
 def read_vulvendor(info):
     if SITE == 'wooyun':
         vendor_info = info[2].a.get("href").encode("utf-8")
@@ -120,6 +122,7 @@ def read_vulvendor(info):
         pass
     return vulvendor
 
+
 def read_vuldate(info):
     if SITE == 'wooyun':
         date_info = info[4].string
@@ -127,7 +130,6 @@ def read_vuldate(info):
     elif SITE == 'exp-db':
         pass
     return vuldate
-
 
 
 def check_site(url):
@@ -138,6 +140,7 @@ def check_site(url):
     elif 'exploit-db' in url:
         SITE = 'exp-db'
         read_from_expdb(url)
+
 
 def read_from_wooyun(url):
     info = read_info_content(url)
@@ -152,12 +155,15 @@ def read_from_wooyun(url):
     info_words['vulreferer'] = url
     info_words['vuleffect'] = vuleffect
 
+
 def read_expdb_title(url):
     title_info = requests.get(url).content
     return title_info.decode('utf-8')
 
+
 def trans_expdb_info_url(url):
     return url.replace('exploits', 'download')
+
 
 def read_from_expdb(url):
     title_info = read_expdb_title(url)
@@ -166,6 +172,7 @@ def read_from_expdb(url):
     info = read_info_content(info_url)
 
     info_words['vultype'] = vultype
+
 
 def clean_info(args):
     if args.appname:
@@ -190,6 +197,7 @@ def clean_info(args):
     f.write(info.encode('utf-8'))
     f.close()
     print '[+] finished clean.'
+
 
 def trans_tools(tool):
     key_dic = {
@@ -222,7 +230,7 @@ def trans_vuleffect(vultype):
 
 
 def main():
-    parser = argparse.ArgumentParser()   
+    parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--vulurl', help='Vulnerability Refer url eg. -u http://wooyun.org/bugs/wooyun-2014-073369')
     parser.add_argument('-t', '--vultype', help='Vulnerability Type eg. -t sqli')
     parser.add_argument('-i', '--vulid', help='Vulnerability ID eg. -i 111   id自动补全4位,变为0111')
@@ -238,4 +246,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 

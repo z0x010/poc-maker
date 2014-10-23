@@ -128,7 +128,7 @@ def poc_name_maker(words):
     vul_path = splitext(basename(words['vulpath']))[0]
     vulname_list.append(vul_path)
     vulname_list.append(trans_vultype(words['vultype']).replace(' ', '_'))
-    poc_name =  '_' + '_'.join(vulname_list)
+    poc_name = '_' + '_'.join(vulname_list)
     return poc_name.lower()
 
 
@@ -204,16 +204,19 @@ def doc_template_name():
 def poc_template_name():
     return os.path.join(cur_file_dir(), 'template/new_poc_template.txt')
 
+
 def comm_path():
     return os.path.join(cur_file_dir(), 'template/comm')
+
 
 def check_weekdays():
     dirname = weekdays()
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+
 def main():
-    parser = argparse.ArgumentParser()   
+    parser = argparse.ArgumentParser()
     parser.add_argument('--report', action='store_true', help='make week report')
     args = parser.parse_args()
     if args.report:
@@ -243,4 +246,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

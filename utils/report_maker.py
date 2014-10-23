@@ -5,6 +5,7 @@ from utils.weekdays import weekdays
 
 MYNAME = '[flsf]'
 
+
 def make_report():
     dirname = weekdays()
     report_name = '[周报]' + MYNAME + dirname.replace(':', '/')
@@ -28,6 +29,7 @@ def make_report():
 
     report_file = open(report_name.replace('/', ':') + '.txt', 'w')
     report_file.write(report)
+
 
 def main():
     make_report()
