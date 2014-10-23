@@ -51,7 +51,7 @@ poc maker
 * poc_maker.py 会自动生成本周日期目录
 * python pocmaker.py --report 会根据本周日期目录下poc生成周报
 * poc_clean_info.py ,清空poc_info.txt,避免忘记修改某些(无参数默认清空,参数-u根据url读取基本信息
-,如-u http://wooyun.org/bugs/wooyun-2014-073369,也可指定参数修改info)
+,如-u http://wooyun.org/bugs/wooyun-2014-073369 也可指定参数修改info)
 
 
 
