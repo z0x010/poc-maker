@@ -71,9 +71,9 @@ def read_info_content(url):
 
 def read_vultype(info):
     vultype = u''
-    if SITE == 'wooyun': # 存在修复时间条目,读取不到type,带修复 fixed
-        title_info = info[5].string
-        if u'修复时间' in title_info:
+    if SITE == 'wooyun': # 存在修复时间条目,读取不到type,待修复 fixed
+        title_info = info[5].string # 完全公开存在公开时间,读取不到type,待修复,fixed
+        if (u'修复时间' in title_info) or (u'公开时间' in title_info):
             title_info = info[6].string
 
         for sql_key in sql_list:
@@ -92,6 +92,7 @@ def read_vultype(info):
             if upload_key in title_info:
                 vultype = upload_list[0]
                 return vultype
+
     elif SITE == 'exp-db':
         if 'multi' in info.lower():
             print '[-] can\'t read multiple vultype'
@@ -160,7 +161,7 @@ def read_from_wooyun(url):
 
 def read_expdb_title(url):
     title_info = requests.get(url).content
-    return title_info
+    return title_info.decode('utf-8')
 
 def trans_expdb_info_url(url):
     return url.replace('exploits', 'download')
