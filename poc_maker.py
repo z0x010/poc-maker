@@ -132,42 +132,25 @@ def poc_name_maker(words):
 
 def trans_vultype(vultype):
     vultype = vultype.lower()
-    if 'sql' in vultype:
-        return 'sql inj'
-    elif 'cross site scripting' in vultype:
-        return 'xss'
-    elif 'Cross Site Request' in vultype:
-        return 'csrf'
-    elif 'Arbitrary File Creation' in vultype:
-        return 'file creation'
-    elif 'Arbitrary File Deletion' in vultype:
-        return 'file deletion'
-    elif 'Remote Password' in vultype:
-        return 'remote pass change'
-    elif 'Backup File Found' in vultype:
-        return 'bak file found'
-    elif 'command' in vultype:
-        return 'cmd exec'
-    elif 'Arbitraty file download' in vultype:
-        return 'file download'
-    elif 'Arbitraty file deletion' in vultype:
-        return 'file deletion'
-    elif 'Information Disclosure' in vultype:
-        return 'info disclosure'
-    elif 'code' in vultype:
-        return 'code exec'
-    elif 'traversal' in vultype:
-        return 'dir traversal'
-    elif 'remote file' in vultype:
-        return 'rfi'
-    elif 'local file' in vultype:
-        return 'lfi'
-    elif 'arbitrary file download' in vultype:
-        return 'file download'
-    elif 'Information Disclosure' in vultype:
-        return 'info disclosure'
-    else:
-        return vultype
+    key_dic = {
+        'sql': 'sql inj',
+        'cross site scripting': 'xss',
+        'arbitrary file creation': 'file creation',
+        'arbitraty file deletion': 'file deletion',
+        'remote password': 'remote pass change',
+        'backup file found': 'bak file found',
+        'command': 'cmd exec',
+        'arbitraty file download': 'file download',
+        'information disclosure': 'info disclosure',
+        'code': 'code exec',
+        'traversal': 'dir traversal',
+        'remote file': 'rfi',
+        'local file': 'lfi'
+    }
+    for _ in key_dic:
+        if _ in vultype:
+            return key_dic[_]
+    return vultype
 
 
 def poc_maker(poc_name, words):
