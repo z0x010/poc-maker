@@ -8,12 +8,13 @@ import sys
 import shutil
 import zipfile
 import tempfile
+import argparse
 
+from utils.weekdays import weekdays
+from utils.report_maker import make_report
 from lxml import etree
 from datetime import date
 from os.path import splitext, basename
-
-from utils.weekdays import weekdays
 
 
 def multiple_replace(text, adict):
@@ -193,10 +194,7 @@ def cur_file_dir():
 
 
 def poc_info_name():
-    try:
-        return sys.argv[1]
-    except:
-        return os.path.join(cur_file_dir(), 'poc_info.txt')
+    return os.path.join(cur_file_dir(), 'poc_info.txt')
 
 
 def doc_template_name():
@@ -214,9 +212,14 @@ def check_weekdays():
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+def main():
+    parser = argparse.ArgumentParser()   
+    parser.add_argument('--report', action='store_true', help='make week report')
+    args = parser.parse_args()
+    if args.report:
+        make_report()
+        sys.exit(0)
 
-
-if __name__ == "__main__":
     output_path = r''
     words = {}
     read_poc_info(words)
@@ -236,3 +239,8 @@ if __name__ == "__main__":
     poc_maker(poc_name, words)
     file_put_dir(poc_name, doc_name)
     check_weekdays()
+
+
+if __name__ == "__main__":
+    main()
+
