@@ -6,7 +6,7 @@ vulid      :=
 vulpath    := 
 vultype    := 
 vulreferer := 
-vuldesc    :=
+vuldesc    := 
 vuleffect  := 
 # 漏洞公布日期
 vuldate    := 2014-09-
