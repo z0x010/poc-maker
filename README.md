@@ -47,9 +47,8 @@ poc maker
 
 ### Example
 * poc_info.txt填入info
-* python poc_maker.py
-* poc_maker.py 会自动生成本周日期目录
-* python pocmaker.py --report 会根据本周日期目录下poc生成周报
+* python poc_maker.py 根据poc_info生成poc模板,包括py文件及doc文档,同时生成本周工作日目录
+* python pocmaker.py --report 会根据本周工作日目录下poc生成周报
 * poc_clean_info.py ,清空poc_info.txt,避免忘记修改某些(无参数默认清空,参数-u根据url读取基本信息
 ,如-u http://wooyun.org/bugs/wooyun-2014-073369 也可指定参数修改info)
 
@@ -65,7 +64,7 @@ poc maker
 * 3.增加clea_info.py,用于清空poc_info.txt,避免忘记修改某些条目
 * 4.clea_info.py 新增从wooyun url提取几条信息(有限信息,正在进行...)
 * 5.增加weekdays.py 用于生成工作日期(poc_maker.py使用weekdays生成日期目录)
-* 6.增加report_maker.py 用于生成周报(通过日期目录下的poc信息)
+* 6.增加report_maker.py 用于生成周报(通过工作日目录下的poc信息)
 * 7.增加支持新框架模板(new_poc_template)
 * 8.poc_clean_info.py 增加参数,无法自动读取时手动指定,主要用于修改默认tools及vultype
 * 9.增加utils目录
