@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-from utils.weekdays import weekdays
+import sys
+from weekdays import weekdays
 
 MYNAME = '[flsf]'
 
@@ -12,7 +13,14 @@ def make_report():
     pocs = []
     if os.path.exists(dirname):
         pocs = os.listdir(dirname)
-    pocs.remove('.DS_Store')
+    else:
+        print '[-] {dirname} is not exist'.format(dirname=dirname)
+        sys.exit(0)
+
+    try:
+        pocs.remove('.DS_Store')
+    except Exception,e:
+        pass
 
     week_job = ['\n本周工作\n']
     for index, pocname in enumerate(pocs):
