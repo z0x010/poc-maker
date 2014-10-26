@@ -8,6 +8,8 @@ import requests
 import argparse
 from bs4 import BeautifulSoup
 
+from utils.print_status import *
+
 info_temp = u"""appname    := {{ appname }}
 appversion := 
 appvendor  := {{ vulvendor }}
@@ -33,7 +35,7 @@ shortname  := {{ shortname }}
 info_target_url := {{ target_url }}
 info_post_data  := {{ post_data }}
 info_match      := {{ match }}
-info_ohter_match:= {{ match_other }}
+info_other_match:= {{ match_other }}
 info_test_url   := {{ test_url }}
 """
 
@@ -70,8 +72,7 @@ def generate_info(template, context):
 
 
 def read_info_content(url):
-    print
-    print '[*] read info from ' + url
+    print_status('\n[*] read info from ' + url)
     content = requests.get(url).content
     if SITE == 'wooyun':
         soup = BeautifulSoup(content)
@@ -107,7 +108,7 @@ def read_vultype(info):
 
     elif SITE == 'exp-db':
         if 'multi' in info.lower():
-            print '[-] can\'t read multiple vultype'
+            print_error('[-] can\'t read multiple vultype')
             sys.exit(0)
         for sql_key in sql_list:
             if sql_key in info:
@@ -214,7 +215,7 @@ def clean_info(args):
     print info
     f.write(info.encode('utf-8'))
     f.close()
-    print '[+] finished clean.'
+    print_success('[+] finished clean.')
 
 
 def trans_tools(tool):

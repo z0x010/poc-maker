@@ -3,6 +3,7 @@
 import os
 import sys
 from weekdays import weekdays
+from print_status import print_error
 
 MYNAME = '[flsf]'
 
@@ -14,12 +15,12 @@ def make_report():
     if os.path.exists(dirname):
         pocs = os.listdir(dirname)
     else:
-        print '[-] {dirname} is not exist'.format(dirname=dirname)
+        print_error('[-] {dirname} is not exist'.format(dirname=dirname))
         sys.exit(0)
 
     try:
         pocs.remove('.DS_Store')
-    except Exception,e:
+    except Exception, e:
         pass
 
     week_job = ['\n本周工作\n']

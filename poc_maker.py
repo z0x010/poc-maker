@@ -13,6 +13,7 @@ import argparse
 from utils import check_info
 from utils.weekdays import weekdays
 from utils.report_maker import make_report
+from utils.print_status import *
 from lxml import etree
 from datetime import date
 from os.path import splitext, basename
@@ -66,15 +67,15 @@ def write_and_close_docx(xml_content, doc_name):
 
 
 def read_poc_info(dict):
-    print '[*] reading poc_info'
+    print_status('[*] reading poc_info')
     for line in open(poc_info_name()):
         if ':=' in line:
             key, word = line.split(':=')
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
     modify_template(dict)
-    print '[*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype'])
-    print '[*] Vendor: {0}'.format(dict['appvendor'])
+    print_success('    [*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
+    print_success('    [*] Vendor: {0}\n'.format(dict['appvendor']))
     return dict
 
 
@@ -165,13 +166,11 @@ def file_put_dir(poc_name, doc_name):
         os.makedirs(doc_name)
     doc_filename = doc_name + '.docx'
     poc_filename = poc_name + '.py'
-    print '[*] makeing ' + doc_filename
-    print '[*] makeing ' + poc_filename
     shutil.move(doc_filename, doc_name)
     shutil.move(poc_filename, doc_name)
     # shutil.copytree(comm_path(), 'comm')
     # shutil.move('comm', doc_name)
-    print '[+] poc_maker have finished'
+    print_success('\n[+] poc_maker have finished')
 
 
 def date_maker(words):
