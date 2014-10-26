@@ -102,3 +102,4 @@ poc maker
 * 9.增加utils目录
 * 10.poc_maker.py增加--report
 * 11.poc_clean_info.py 增加--target-url,--data,-m1,-m2,--test-url
+* 12.增加utils/print_status.py 用于termcolor
