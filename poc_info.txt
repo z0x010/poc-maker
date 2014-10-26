@@ -1,15 +1,15 @@
 appname    := 
 appversion := 
-appvendor  := 
+appvendor  := http://www.hanweb.com
 
 vulid      := 
 vulpath    := 
-vultype    := 
-vulreferer := 
+vultype    := SQL Injection
+vulreferer := http://wooyun.org/bugs/wooyun-2014-073369
 vuldesc    := 
-vuleffect  := 
+vuleffect  := SQL注入,泄露信息
 # 漏洞公布日期
-vuldate    := 2014-09-
+vuldate    := 2014-08-25
 
 
 tools      := Firefox
@@ -17,3 +17,11 @@ tooldesc   := 浏览器
 
 myname     := 
 shortname  := 
+
+
+# verify
+info_target_url := 
+info_post_data  := 
+info_match      := 
+info_ohter_match:= 
+info_test_url   := 
