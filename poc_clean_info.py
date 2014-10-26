@@ -212,10 +212,11 @@ def clean_info(args):
 
     f = open('poc_info.txt', 'w')
     info = generate_info(info_temp, info_words)
+    print_status('[*] poc_info\n')
     print info
     f.write(info.encode('utf-8'))
     f.close()
-    print_success('[+] finished clean.')
+    print_status('[+] clean finish')
 
 
 def trans_tools(tool):
