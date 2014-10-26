@@ -32,6 +32,9 @@ shortname  := {{ shortname }}
 # verify
 info_target_url := {{ target_url }}
 info_post_data  := {{ post_data }}
+info_match      := {{ match }}
+info_ohter_match:= {{ match_other }}
+info_test_url   := {{ test_url }}
 """
 
 
@@ -42,7 +45,7 @@ VULDATE = u'2014-09-'
 
 SITE = ''
 info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
-              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': ''}
+              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': '', 'match': '', 'match_other': '', 'test_url': ''}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
@@ -199,6 +202,12 @@ def clean_info(args):
         info_words['target_url'] = args.target_url
     if args.data:
         info_words['post_data'] = args.data
+    if args.match:
+        info_words['match'] = args.match
+    if args.match_other:
+        info_words['match_other'] = args.match_other
+    if args.test_url:
+        info_words['test_url'] = args.test_url
 
     f = open('poc_info.txt', 'w')
     info = generate_info(info_temp, info_words)
@@ -247,8 +256,12 @@ def main():
     parser.add_argument('-s', '--vuldesc', help='Vulnerability description')
     parser.add_argument('-n', '--appname', help='app name eg. wordpress')
 
-    parser.add_argument('--target-url', help='Vulneratility target url')
+    parser.add_argument('--target-url', dest='target_url', help='Vulnerability target url')
     parser.add_argument('--data', help='Post data')
+    parser.add_argument('--test-url', dest='test_url', help='Vulnerability test site')
+
+    parser.add_argument('-m1', '--match', help='Verify match')
+    parser.add_argument('-m2', '--match-other', dest='match_other', help='Verify other match')
 
     args = parser.parse_args()
     if args.vulurl:

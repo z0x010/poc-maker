@@ -72,14 +72,24 @@ def read_poc_info(dict):
             key, word = line.split(':=')
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
-    if dict['info_post_data']:
-        dict['info_post_data'] = 'payload = \'{data}\'\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=dict['info_post_data'])
-    else:
-        dict['info_post_data'] = '\n\n        response = req.get(self.url + target_url, timeout=10)'
-
+    modify_template(dict)
     print '[*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype'])
     print '[*] Vendor: {0}'.format(dict['appvendor'])
     return dict
+
+
+def modify_template(dict):
+    if dict['info_post_data']:
+        dict['info_post_data'] = 'payload = \'{data}\'\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=dict['info_post_data'])
+    else:
+        dict['info_post_data'] = '\n        response = req.get(self.url + target_url, timeout=10)'
+    if dict['info_match']:
+        dict['info_match'] = '\n        match = re.search(\'{match}\', content)'.format(match=dict['info_match'])
+    if dict['info_other_match']:
+        dict['info_other_match'] = 'match_other = re.search(\'{match}\', content)\n\n        if match and match_other:'.format(match=dict['info_other_match'])
+    else:
+        dict['info_other_match'] = '\n        if match:'
+
 
 def doc_name_maker(words):
     vulname_list = []
