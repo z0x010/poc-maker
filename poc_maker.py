@@ -10,6 +10,7 @@ import zipfile
 import tempfile
 import argparse
 
+from utils import check_info
 from utils.weekdays import weekdays
 from utils.report_maker import make_report
 from lxml import etree
@@ -71,30 +72,14 @@ def read_poc_info(dict):
             key, word = line.split(':=')
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
+    if dict['info_post_data']:
+        dict['info_post_data'] = 'payload = \'{data}\'\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=dict['info_post_data'])
+    else:
+        dict['info_post_data'] = '\n\n        response = req.get(self.url + target_url, timeout=10)'
+
     print '[*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype'])
     print '[*] Vendor: {0}'.format(dict['appvendor'])
     return dict
-
-
-def info_warning(dict):
-    warning_list = ['appversion', 'vulid', 'appvendor', 'vulreferer', 'vuldesc', 'vuleffect', 'vuldate', 'myname', 'shortname']
-    for _ in warning_list:
-        if not dict[_]:
-            print '[-] Warning: YOU FORGET {0}!'.format(_)
-    if dict['vuldate'] == str(date.today()):
-        print '[-] Provided Vul published: {0}, the same as today! Are you sure?'.format(dict['vuldate'])
-
-
-def info_error(dict):
-    error_list = ['appname', 'vultype', 'vulpath']
-    error = False
-    for _ in error_list:
-        if not dict[_]:
-            print '[-] Error: must provide {0}!'.format(_)
-            error = True
-    if error:
-        sys.exit(1)
-
 
 def doc_name_maker(words):
     vulname_list = []
@@ -226,8 +211,8 @@ def main():
     output_path = r''
     words = {}
     read_poc_info(words)
-    info_error(words)
-    info_warning(words)
+    check_info.info_error(words)
+    check_info.info_warning(words)
     date_maker(words)
     xml_from_file = get_word_xml(doc_template_name())
     xml_tree = get_xml_tree(xml_from_file)

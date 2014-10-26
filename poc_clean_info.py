@@ -27,6 +27,11 @@ tooldesc   := {{ toolsdesc }}
 
 myname     := {{ myname }}
 shortname  := {{ shortname }}
+
+
+# verify
+info_target_url := {{ target_url }}
+info_post_data  := {{ post_data }}
 """
 
 
@@ -37,7 +42,7 @@ VULDATE = u'2014-09-'
 
 SITE = ''
 info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
-              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME}
+              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': ''}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
@@ -190,6 +195,10 @@ def clean_info(args):
         info_words['toolsdesc'] = trans_tools(args.vultool)
     if args.vuldesc:
         info_words['vuldesc'] = args.vuldesc.decode('utf-8')
+    if args.target_url:
+        info_words['target_url'] = args.target_url
+    if args.data:
+        info_words['post_data'] = args.data
 
     f = open('poc_info.txt', 'w')
     info = generate_info(info_temp, info_words)
@@ -237,6 +246,10 @@ def main():
     parser.add_argument('-o', '--vultool', default='Firefox', help='tools eg.sqlmap or Firefox')
     parser.add_argument('-s', '--vuldesc', help='Vulnerability description')
     parser.add_argument('-n', '--appname', help='app name eg. wordpress')
+
+    parser.add_argument('--target-url', help='Vulneratility target url')
+    parser.add_argument('--data', help='Post data')
+
     args = parser.parse_args()
     if args.vulurl:
         url = args.vulurl
