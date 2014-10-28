@@ -87,7 +87,7 @@ poc maker
 * poc_clean_info.py ,清空poc_info.txt,避免忘记修改某些(无参数默认清空,参数-u根据url读取基本信息
 ,如-u http://wooyun.org/bugs/wooyun-2014-073369 也可指定参数修改info)
 * poc_clean_info.py 可以指定taget-url, post-data, match, match_other,也可以根据poc_info.txt手动修改,会根据指定info自动调整模板
-* 当poc_info.txt 提供taget_url, match, test_url时,使用poc_maker会自动测试test-url.
+* 当poc_info.txt 提供taget_url, match, test_url时,使用poc_maker会自动测试test-url.也可以用--verify [目录名]来手动验证
 
 
 
@@ -109,3 +109,4 @@ poc maker
 * 11.poc_clean_info.py 增加--target-url,--data,-m1,-m2,--test-url
 * 12.增加utils/print_status.py 用于termcolor
 * 13.增加自动verify poc,仅当poc_info.txt中提供target-url,match,test-url时
+* 14.poc_maker.py 增加--verify,用于手动验证POC

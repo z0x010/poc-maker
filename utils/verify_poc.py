@@ -4,6 +4,8 @@
 from os import path
 from pocsuite.utils import get_poc_object
 
+from print_status import *
+
 
 default_header = {
     'Accept': '*/*',
@@ -19,7 +21,9 @@ default_header = {
 
 
 def verify_poc(verify_path, verify_url):
+    poc_filename = path.basename(verify_path)
+    separator = '=' * 90
+    print_status('{separator}\n[*] Verify POC {name} on {url}:'.format(separator=separator, name=poc_filename, url=verify_url))
     poc = get_poc_object(verify_path)
     output = poc.execute(verify_url, default_header, mode='verify', verbose=True)
-    print output
     output.print_result()
