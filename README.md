@@ -18,29 +18,33 @@ poc maker
                              [-m2 MATCH_OTHER]
 
     optional arguments:
-      -h, --help            show this help message and exit
-      -u VULURL, --vulurl VULURL
-                            Vulnerability Refer url eg. -u
-                            http://wooyun.org/bugs/wooyun-2014-073369
-      -t VULTYPE, --vultype VULTYPE
-                            Vulnerability Type eg. -t sqli
-      -i VULID, --vulid VULID
-                            Vulnerability ID eg. -i 111
-                            id自动补全4位,变为0111
-      -o VULTOOL, --vultool VULTOOL
-                            tools eg.sqlmap or Firefox
-      -s VULDESC, --vuldesc VULDESC
-                            Vulnerability description
-      -n APPNAME, --appname APPNAME
-                            app name eg. wordpress
-      --target-url TARGET_URL
-                            Vulnerability target url
-      --data DATA           Post data
-      --test-url TEST_URL   Vulnerability test site
-      -m1 MATCH, --match MATCH
-                            Verify match
-      -m2 MATCH_OTHER, --match-other MATCH_OTHER
-                            Verify other match 
+    -h, --help            show this help message and exit
+    -u VULURL, --vulurl VULURL
+                        Vulnerability Refer url eg. -u
+                        http://wooyun.org/bugs/wooyun-2014-073369
+    -t VULTYPE, --vultype VULTYPE
+                        Vulnerability Type eg. -t sqli
+    -i VULID, --vulid VULID
+                        Vulnerability ID eg. -i 111
+                        id自动补全4位,变为0111
+    -o VULTOOL, --vultool VULTOOL
+                        tools eg.sqlmap or Firefox
+    -s VULDESC, --vuldesc VULDESC
+                        Vulnerability description
+    -n APPNAME, --appname APPNAME
+                        APP name eg. wordpress
+    -p VULPATH, --vulpath VULPATH
+                        Vulnerability path eg. /index.php
+    --target-url TARGET_URL
+                        Vulnerability target url
+    --data DATA           Post data
+    --test-url TEST_URL   Vulnerability test site
+    --appversion APPVERSION
+                        APP version eg. 1.0
+    -m1 MATCH, --match MATCH
+                        Verify match
+    -m2 MATCH_OTHER, --match-other MATCH_OTHER
+                        Verify other match 
 
 
 

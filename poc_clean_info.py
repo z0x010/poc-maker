@@ -11,11 +11,11 @@ from bs4 import BeautifulSoup
 from utils.print_status import *
 
 info_temp = u"""appname    := {{ appname }}
-appversion := 
+appversion := {{ appversion }}
 appvendor  := {{ vulvendor }}
 
 vulid      := {{ vulid }}
-vulpath    := 
+vulpath    := {{ vulpath }}
 vultype    := {{ vultype }}
 vulreferer := {{ vulreferer }}
 vuldesc    := {{ vuldesc }}
@@ -47,7 +47,7 @@ VULDATE = u'2014-09-'
 
 SITE = ''
 info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
-              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': '', 'match': '', 'match_other': '', 'test_url': ''}
+              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': '', 'match': '', 'match_other': '', 'test_url': '', 'appversion': '', 'vulpath': ''}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
@@ -150,7 +150,6 @@ def check_site(url):
         SITE = 'exp-db'
         read_from_expdb(url)
 
-
 def read_from_wooyun(url):
     info = read_info_content(url)
     vultype = read_vultype(info)
@@ -186,6 +185,8 @@ def read_from_expdb(url):
 def clean_info(args):
     if args.appname:
         info_words['appname'] = args.appname
+    if args.vulurl:
+        info_words['vulreferer'] = args.vulurl
     if args.vultype:
         info_words['vultype'] = trans_vultype(args.vultype)
         info_words['vuleffect'] = trans_vuleffect(info_words['vultype'])
@@ -209,6 +210,10 @@ def clean_info(args):
         info_words['match_other'] = args.match_other
     if args.test_url:
         info_words['test_url'] = args.test_url
+    if args.vulpath:
+        info_words['vulpath'] = args.vulpath
+    if args.appversion:
+        info_words['appversion'] = args.appversion
 
     f = open('poc_info.txt', 'w')
     info = generate_info(info_temp, info_words)
@@ -235,6 +240,7 @@ def trans_vultype(vultype):
         'loginbypass': 'Login Bypass',
         'filedownload': 'Arbitrary File Download',
         'filedown': 'Arbitrary File Download',
+        'xss': 'Cross Site Scripting',
     }
     return key_dic.get(vultype, '')
 
@@ -256,11 +262,13 @@ def main():
     parser.add_argument('-i', '--vulid', help='Vulnerability ID eg. -i 111   id自动补全4位,变为0111')
     parser.add_argument('-o', '--vultool', default='Firefox', help='tools eg.sqlmap or Firefox')
     parser.add_argument('-s', '--vuldesc', help='Vulnerability description')
-    parser.add_argument('-n', '--appname', help='app name eg. wordpress')
+    parser.add_argument('-n', '--appname', help='APP name eg. wordpress')
+    parser.add_argument('-p', '--vulpath', help='Vulnerability path eg. /index.php')
 
     parser.add_argument('--target-url', dest='target_url', help='Vulnerability target url')
     parser.add_argument('--data', help='Post data')
     parser.add_argument('--test-url', dest='test_url', help='Vulnerability test site')
+    parser.add_argument('--appversion', help='APP version eg. 1.0')
 
     parser.add_argument('-m1', '--match', help='Verify match')
     parser.add_argument('-m2', '--match-other', dest='match_other', help='Verify other match')
