@@ -14,6 +14,7 @@ from utils import check_info
 from utils.weekdays import weekdays
 from utils.report_maker import make_report
 from utils.print_status import *
+from utils.verify_poc import verify_poc
 from lxml import etree
 from datetime import date
 from os.path import splitext, basename
@@ -74,8 +75,8 @@ def read_poc_info(dict):
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
     modify_template(dict)
-    print_success('    [*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
-    print_success('    [*] Vendor: {0}\n'.format(dict['appvendor']))
+    print_status('\t[*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
+    print_status('\t[*] Vendor: {0}\n'.format(dict['appvendor']))
     return dict
 
 
@@ -162,15 +163,21 @@ def poc_maker(poc_name, words):
 
 
 def file_put_dir(poc_name, doc_name):
-    if not os.path.exists(doc_name):
-        os.makedirs(doc_name)
     doc_filename = doc_name + '.docx'
     poc_filename = poc_name + '.py'
-    shutil.move(doc_filename, doc_name)
-    shutil.move(poc_filename, doc_name)
-    # shutil.copytree(comm_path(), 'comm')
-    # shutil.move('comm', doc_name)
+    poc_filepath = os.path.join(doc_name, poc_filename)
+    if not os.path.exists(doc_name):
+        os.makedirs(doc_name)
+        shutil.move(doc_filename, doc_name)
+        shutil.move(poc_filename, doc_name)
+        # shutil.copytree(comm_path(), 'comm')
+        # shutil.move('comm', doc_name)
+    else:
+        print_warning('[-] {dir} is exist'.format(dir=doc_name))
+        os.remove(poc_filename)
+        os.remove(doc_filename)
     print_success('\n[+] poc_maker have finished')
+    return poc_filepath
 
 
 def date_maker(words):
@@ -209,6 +216,14 @@ def check_weekdays():
         os.makedirs(dirname)
 
 
+def verify_this_poc(poc_filepath, words):
+    verify_require = [words['info_target_url'], words['info_test_url'], words['info_match']]
+    if all(verify_require):
+        print_status('=============================\n[*] Verify this poc:\n')
+        verify_path = os.path.join(os.path.abspath('.'), poc_filepath)
+        verify_poc(verify_path, verify_require[1])
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', action='store_true', help='make week report')
@@ -234,8 +249,9 @@ def main():
         doc_name = os.path.join(output_path, doc_name)
     write_and_close_docx(xml_tree, doc_name)
     poc_maker(poc_name, words)
-    file_put_dir(poc_name, doc_name)
+    poc_filepath = file_put_dir(poc_name, doc_name)
     check_weekdays()
+    verify_this_poc(poc_filepath, words)
 
 
 if __name__ == "__main__":
