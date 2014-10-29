@@ -79,8 +79,8 @@ def read_poc_info(dict):
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
     modify_template(dict)
-    print_status('\t[*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
-    print_status('\t[*] Vendor: {0}\n'.format(dict['appvendor']))
+    print_status('    [*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
+    print_status('    [*] Vendor: {0}\n'.format(dict['appvendor']))
     return dict
 
 
@@ -184,7 +184,7 @@ def file_put_dir(poc_name, doc_name):
         print_warning('[-] {dir} is exist'.format(dir=doc_name))
         os.remove(poc_filename)
         os.remove(doc_filename)
-    print_success('\n[+] poc_maker have finished')
+    print_success('[+] poc_maker have finished')
     return poc_filepath
 
 
