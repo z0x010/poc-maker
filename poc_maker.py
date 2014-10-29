@@ -28,8 +28,12 @@ def multiple_replace(text, adict):
     return rx.sub(one_xlat, text)
 
 
-def get_word_xml(doc_template_filename):
-    zip = zipfile.ZipFile(doc_template_filename)
+def get_word_xml():
+    doc_template_filename = doc_template_name()
+    try:
+        zip = zipfile.ZipFile(doc_template_filename)
+    except Exception, e:
+        print_error('[-] template {name} not exist'.format(name=doc_template_filename))
     xml_content = zip.read('word/document.xml')
     return xml_content
 
@@ -82,15 +86,15 @@ def read_poc_info(dict):
 
 def modify_template(dict):
     if dict['info_post_data']:
-        dict['info_post_data'] = 'payload = \'{data}\'\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=dict['info_post_data'])
+        dict['info_post_data'] = u'payload = \'{data}\'\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=dict['info_post_data'])
     else:
-        dict['info_post_data'] = '\n        response = req.get(self.url + target_url, timeout=10)'
+        dict['info_post_data'] = u'\n        response = req.get(self.url + target_url, timeout=10)'
     if dict['info_match']:
-        dict['info_match'] = '\n        match = re.search(\'{match}\', content)'.format(match=dict['info_match'])
+        dict['info_match'] = u'\n        match = re.search(\'{match}\', content)'.format(match=dict['info_match'])
     if dict['info_other_match']:
-        dict['info_other_match'] = 'match_other = re.search(\'{match}\', content)\n\n        if match and match_other:'.format(match=dict['info_other_match'])
+        dict['info_other_match'] = u'match_other = re.search(\'{match}\', content)\n\n        if match and match_other:'.format(match=dict['info_other_match'])
     else:
-        dict['info_other_match'] = '\n        if match:'
+        dict['info_other_match'] = u'\n        if match:'
 
 
 def doc_name_maker(words):
@@ -155,7 +159,11 @@ def trans_vultype(vultype):
 def poc_maker(poc_name, words):
     filename = poc_name + '.py'
     poc = open(filename, 'w')
-    template = open(poc_template_name())
+    poc_template_filename = poc_template_name()
+    try:
+        template = open(poc_template_filename)
+    except Exception, e:
+        print_error('[-] template {name} not exist'.format(name=poc_template_filename))
     poc_content = template.read().decode('utf-8')
     template.close()
     poc.write(multiple_replace(poc_content, words).encode('utf-8'))
@@ -260,15 +268,17 @@ def main():
     check_info.info_error(words)
     check_info.info_warning(words)
     date_maker(words)
-    xml_from_file = get_word_xml(doc_template_name())
+    xml_from_file = get_word_xml()
     xml_tree = get_xml_tree(xml_from_file)
     for node, text in itertext(xml_tree, words):
         pass
+
     doc_name = doc_name_maker(words)
     poc_name = poc_name_maker(words)
     if output_path:
         poc_name = os.path.join(output_path, poc_name)
         doc_name = os.path.join(output_path, doc_name)
+
     write_and_close_docx(xml_tree, doc_name)
     poc_maker(poc_name, words)
     poc_filepath = file_put_dir(poc_name, doc_name)
