@@ -10,11 +10,10 @@ import zipfile
 import tempfile
 import argparse
 
-from utils import check_info
 from utils import env
-from utils.weekdays import weekdays
-from utils.report_maker import make_report
 from utils.print_status import *
+from utils.weekdays import weekdays
+from utils.check_info import check_info
 from utils.verify_poc import verify_poc
 from utils.save_info import save_info
 from utils.modify_template import modify_poc_template
@@ -154,11 +153,25 @@ def verify_this_poc_by_dir(path):
         print_error('[-] can\'t read test_url in {name}'.format(name=poc_filename))
 
 
+def doc_maker(doc_name, words, doc_template_file):
+    xml_from_file = get_word_xml(doc_template_file)
+    xml_tree = get_xml_tree(xml_from_file)
+    for node, text in itertext(xml_tree, words):
+        pass
+    write_and_close_docx(xml_tree, doc_name, doc_template_file)
+
+
+def read_info(words, poc_info_file):
+    read_poc_info(words, poc_info_file)
+    check_info(words)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', action='store_true', help='Make week report')
     parser.add_argument('--verify', help='Verify POC by directory eg. 0000_app_1.0_index.php_SQL-Injection')
-    parser.add_argument('--template', dest='templates', default='pocsuite', help='Choice the poc template')
+    parser.add_argument('-t', '--template', default='pocsuite', help='Choice the poc template')
+    parser.add_argument('-i', '--pocinfo', default=env.poc_info_name(), help='Choice the poc template')
     args = parser.parse_args()
     if args.report:
         make_report()
@@ -167,24 +180,17 @@ def main():
         verify_this_poc_by_dir(args.verify)
         sys.exit(0)
 
-    poc_info_file = env.poc_info_name()
-    doc_template_file = env.doc_template_name()
-    poc_template_file = env.poc_template_name()
+    poc_info_file = args.pocinfo
+    poc_template_file, doc_template_file = env.get_template_file(args.template)
+
     words = {}
-
-    read_poc_info(words, poc_info_file)
-    check_info.info_error(words)
-    check_info.info_warning(words)
+    read_info(words, poc_info_file)
     date_maker(words)
-    xml_from_file = get_word_xml(doc_template_file)
-    xml_tree = get_xml_tree(xml_from_file)
-    for node, text in itertext(xml_tree, words):
-        pass
-
     poc_name, doc_name = name_maker(words)
 
-    write_and_close_docx(xml_tree, doc_name, doc_template_file)
+    doc_maker(doc_name, words, doc_template_file)
     poc_maker(poc_name, words, poc_template_file)
+
     poc_filepath = file_put_dir(poc_name, doc_name)
     check_weekdays()
     save_info(poc_info_file, doc_name)

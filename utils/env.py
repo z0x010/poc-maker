@@ -16,12 +16,14 @@ def poc_info_name():
     return os.path.join(cur_file_dir(), 'poc_info.txt')
 
 
-def doc_template_name():
-    return os.path.join(cur_file_dir(), 'template/poc_template.docx')
-
-
-def poc_template_name():
-    return os.path.join(cur_file_dir(), 'template/new_poc_template.txt')
+def get_template_file(template):
+    if template == 'pocsuite':
+        doc_template = os.path.join(cur_file_dir(), 'template/poc_template.docx')
+        poc_template = os.path.join(cur_file_dir(), 'template/new_poc_template.txt')
+    else:
+        doc_template = os.path.join(cur_file_dir(), 'template/poc_template.docx')
+        poc_template = os.path.join(cur_file_dir(), 'template/poc_template.txt')
+    return poc_template, doc_template
 
 
 def comm_path():
