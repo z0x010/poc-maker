@@ -110,3 +110,4 @@ poc maker
 * 12.增加utils/print_status.py 用于termcolor
 * 13.增加自动verify poc,仅当poc_info.txt中提供target-url,match,test-url时
 * 14.poc_maker.py 增加--verify,用于手动验证POC
+* 15.增加poc_info.txt 备份
