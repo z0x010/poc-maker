@@ -16,7 +16,7 @@ def save_info(info_file, poc_name):
     if os.path.exists(saved_file):
         print_warning('    [-] {name} exist, it will be replaced'.format(name=poc_name))
     else:
-        print_status('    [*] {nmae} will be saved'.format(name=poc_name))
+        print_status('    [*] {name} will be saved'.format(name=poc_name))
 
     try:
         shutil.copyfile(info_file, saved_file)

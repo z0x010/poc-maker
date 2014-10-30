@@ -10,6 +10,12 @@ from bs4 import BeautifulSoup
 
 from utils.print_status import *
 
+
+MYNAME = u'flsf'
+SHORTNAME = u'flsf'
+VULDATE = u'2014-09-'
+
+
 info_temp = u"""appname    := {{ appname }}
 appversion := {{ appversion }}
 appvendor  := {{ vulvendor }}
@@ -40,11 +46,6 @@ info_test_url   := {{ test_url }}
 """
 
 
-MYNAME = u''
-SHORTNAME = u''
-VULDATE = u'2014-09-'
-
-
 SITE = ''
 info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
               'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': '', 'match': '', 'match_other': '', 'test_url': '', 'appversion': '', 'vulpath': ''}
@@ -72,8 +73,8 @@ def generate_info(template, context):
 
 
 def read_info_content(url):
-    print_status('\n[*] read info from ' + url)
-    content = requests.get(url).content
+    print_status('[*] read info from ' + url)
+    content = requests.get(url, timeout=3).content
     if SITE == 'wooyun':
         soup = BeautifulSoup(content)
         info_list = soup.find("div", class_="content").find_all("h3")
@@ -108,8 +109,7 @@ def read_vultype(info):
 
     elif SITE == 'exp-db':
         if 'multi' in info.lower():
-            print_error('[-] can\'t read multiple vultype')
-            sys.exit(0)
+            print_warning('[-] can\'t read multiple vultype')
         for sql_key in sql_list:
             if sql_key in info:
                 vultype = sql_list[0]
@@ -120,7 +120,7 @@ def read_vultype(info):
 def read_vulvendor(info):
     if SITE == 'wooyun':
         vendor_info = info[2].a.get("href").encode("utf-8")
-        content = requests.get(vendor_info).content
+        content = requests.get(vendor_info, timeout=3).content
         soup = BeautifulSoup(content)
         try:
             url_info = soup.find("div", class_="content").h3.string
@@ -165,7 +165,7 @@ def read_from_wooyun(url):
 
 
 def read_expdb_title(url):
-    title_info = requests.get(url).content
+    title_info = requests.get(url, timeout=3).content
     return title_info.decode('utf-8')
 
 
@@ -176,9 +176,9 @@ def trans_expdb_info_url(url):
 def read_from_expdb(url):
     title_info = read_expdb_title(url)
     vultype = read_vultype(title_info)
-    info_url = trans_expdb_info_url(url)
-    info = read_info_content(info_url)
-
+    if vultype:
+        info_url = trans_expdb_info_url(url)
+        info = read_info_content(info_url)
     info_words['vultype'] = vultype
 
 
@@ -189,6 +189,8 @@ def clean_info(args):
         info_words['vulreferer'] = args.vulurl
     if args.vultype:
         info_words['vultype'] = trans_vultype(args.vultype)
+        if not info_words['vultype']:
+            print_warning('[-] can\'t tans {type}'.format(type=args.vultype))
         info_words['vuleffect'] = trans_vuleffect(info_words['vultype'])
     if args.vulid:
         id = args.vulid
@@ -234,21 +236,27 @@ def trans_tools(tool):
 
 def trans_vultype(vultype):
     key_dic = {
+        'sql': 'SQL Injection',
         'sqli': 'SQL Injection',
-        'fileupload': 'File Upload',
         'upload': 'File Upload',
+        'fileupload': 'File Upload',
+        'bypass': 'Login Bypass',
         'loginbypass': 'Login Bypass',
         'filedownload': 'Arbitrary File Download',
         'filedown': 'Arbitrary File Download',
+        'filedelete': 'Arbitraty File Deletion',
+        'filedeletion': 'Arbitraty File Deletion',
+        'filede': 'Arbitraty File Deletion',
         'xss': 'Cross Site Scripting',
     }
-    return key_dic.get(vultype, '')
+    return key_dic.get(vultype.lower(), '')
 
 
 def trans_vuleffect(vultype):
     key_dic = {
         'SQL Injection': u'SQL注入,泄露信息',
         'Arbitrary File Download': u'任意文件下载,泄露信息',
+        'Arbitrary File Deletion': u'任意文件删除',
         'Login Bypass': u'登录绕过,权限绕过,非授权访问',
         'File Upload': u'文件上传导致代码执行',
     }
