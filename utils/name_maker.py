@@ -4,6 +4,7 @@
 import os
 from os.path import splitext, basename
 
+
 def name_maker(words):
     output_path = r''
     doc_name = doc_name_maker(words)
@@ -13,9 +14,12 @@ def name_maker(words):
         doc_name = os.path.join(output_path, doc_name)
     return poc_name, doc_name
 
+
 def doc_name_maker(words):
     vulname_list = []
     vul_id = words['vulid']
+    if not vul_id:
+        vul_id = '0000'
     app_name = words['appname'].replace(' ', '-')
     vulname_list.append(app_name)
     if words['appversion']:
@@ -28,9 +32,13 @@ def doc_name_maker(words):
     vulname_list.append(vul_type)
     return vul_id + '_' + '_'.join(vulname_list)
 
+
 def poc_name_maker(words):
     vulname_list = []
-    vulname_list.append(words['vulid'])
+    vul_id = words['vulid']
+    if not vul_id:
+        vul_id = '0000'
+    vulname_list.append(vul_id)
     app_name = words['appname']
     if '-' in app_name:
         app_name = app_name.replace('-', '_')
