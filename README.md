@@ -92,7 +92,7 @@ poc maker
 
 
 ### Other
-* template 涉及公司代码, 暂缺
+* template 自行修改
 
 
 ### Changelog
