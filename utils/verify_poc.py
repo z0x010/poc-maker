@@ -3,11 +3,13 @@
 
 import sys
 from os import path
-from pocsuite.utils import get_poc_object
-from pocsuite.check import check_poc_if_violation
-
 from print_status import *
 
+try:
+    from pocsuite.utils import get_poc_object
+    from pocsuite.check import check_poc_if_violation
+except Exception, e:
+    pass
 
 default_header = {
     'Accept': '*/*',
@@ -27,7 +29,10 @@ def verify_poc(verify_path, verify_url):
     separator = '=' * 40
     print separator
     print_status('[*] Verify POC {name} on {url}:'.format(name=poc_filename, url=verify_url))
-    poc = get_poc_object(verify_path)
+    try:
+        poc = get_poc_object(verify_path)
+    except Exception, e:
+        print_error('[-] No module named pocsuite.utils can\'t verify this poc, please manual verify')
     print_status('[*] Check POC violation:')
     if check_poc_if_violation(poc, False):
         sys.exit(0)
