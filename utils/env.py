@@ -4,6 +4,7 @@
 import os
 import sys
 
+
 def cur_file_dir():
     path = sys.path[0]
     if os.path.isdir(path):
@@ -28,4 +29,3 @@ def get_template_file(template):
 
 def comm_path():
     return os.path.join(cur_file_dir(), 'template/comm')
-
