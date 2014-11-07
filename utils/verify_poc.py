@@ -7,7 +7,6 @@ from print_status import *
 
 try:
     from pocsuite.utils import get_poc_object
-    from pocsuite.check import check_poc_if_violation
 except Exception, e:
     pass
 
@@ -27,14 +26,20 @@ default_header = {
 def verify_poc(verify_path, verify_url):
     poc_filename = path.basename(verify_path)
     separator = '=' * 40
-    print separator
     print_status('[*] Verify POC {name} on {url}:'.format(name=poc_filename, url=verify_url))
     try:
         poc = get_poc_object(verify_path)
     except Exception, e:
         print_error('[-] No module named pocsuite.utils can\'t verify this poc, please manual verify')
-    print_status('[*] Check POC violation:')
-    if check_poc_if_violation(poc, False):
-        sys.exit(0)
-    output = poc.execute(verify_url, default_header, mode='verify', verbose=True)
-    output.print_result()
+
+    result = poc.execute(verify_url, default_header, mode='verify', verbose=True)
+    if result.status == 1:
+        print_success('[+] Verify POC finished')
+        for k, v in result.result.items():
+            if isinstance(v, dict):
+                for kk, vv in v.items():
+                    print '    [*] %s : %s' % (kk, vv)
+        else:
+            print '    [*] %s : %s' % (k, v)
+    else:
+        print_error('[-] Verify POC failed, please manual verify')
