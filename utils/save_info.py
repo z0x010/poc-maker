@@ -4,13 +4,12 @@
 import os
 import shutil
 from print_status import *
-from env import cur_file_dir
-
+from env import paths
 
 def save_info(info_file, poc_name):
     print '=' * 40
     print_status('[*] save poc_info:')
-    info_dir = os.path.join(cur_file_dir(), 'info_bak')
+    info_dir = os.path.join(paths.ROOT_PATH, 'info_bak')
     saved_file = os.path.join(info_dir, poc_name) + '.txt'
     if not os.path.exists(info_dir):
         os.makedirs(info_dir)

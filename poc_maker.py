@@ -10,7 +10,6 @@ import zipfile
 import tempfile
 import argparse
 
-from utils import env
 from utils.print_status import *
 from utils.weekdays import weekdays
 from utils.check_info import check_info
@@ -18,6 +17,8 @@ from utils.verify_poc import verify_poc
 from utils.save_info import save_info
 from utils.modify_template import modify_poc_template
 from utils.name_maker import name_maker
+from utils.env import paths
+from utils.env import set_paths
 from lxml import etree
 from datetime import date
 
@@ -34,7 +35,7 @@ def get_word_xml(doc_template_file):
     try:
         zip = zipfile.ZipFile(doc_template_file)
     except Exception, e:
-        print_error('[-] template {name} does not exist'.format(name=doc_template_file))
+        print_error('[-] doc template {name} does not exist'.format(name=doc_template_file))
     xml_content = zip.read('word/document.xml')
     return xml_content
 
@@ -65,7 +66,8 @@ def write_and_close_docx(xml_content, doc_name, doc_template_file):
         f.write(xmlstr)
     filenames = zip.namelist()
     output_filename = doc_name + '.docx'
-    zip_copy_filename = output_filename
+    output_filepath = os.path.join(paths.ROOT_PATH, output_filename)
+    zip_copy_filename = output_filepath
     with zipfile.ZipFile(zip_copy_filename, "w") as docx:
         for filename in filenames:
             docx.write(os.path.join(tmp_dir, filename), filename)
@@ -87,11 +89,12 @@ def read_poc_info(dict, poc_info_file):
 
 def poc_maker(poc_name, words, poc_template_file):
     filename = poc_name + '.py'
-    poc = open(filename, 'w')
+    filepath = os.path.join(paths.ROOT_PATH, filename)
+    poc = open(filepath, 'w')
     try:
         template = open(poc_template_file)
     except Exception, e:
-        print_error('[-] template {name} does not exist'.format(name=poc_template_file))
+        print_error('[-] poc template {name} does not exist'.format(name=poc_template_file))
     poc_content = template.read().decode('utf-8')
     template.close()
     poc.write(multiple_replace(poc_content, words).encode('utf-8'))
@@ -101,19 +104,22 @@ def poc_maker(poc_name, words, poc_template_file):
 def file_put_dir(poc_name, doc_name):
     doc_filename = doc_name + '.docx'
     poc_filename = poc_name + '.py'
-    poc_filepath = os.path.join(doc_name, poc_filename)
-    if not os.path.exists(doc_name):
-        os.makedirs(doc_name)
-        shutil.move(doc_filename, doc_name)
-        shutil.move(poc_filename, doc_name)
-        # shutil.copytree(env.comm_path(), 'comm')
-        # shutil.move('comm', doc_name)
+    ROOT_PATH = paths.ROOT_PATH
+    doc_filepath = os.path.join(ROOT_PATH, doc_filename)
+    poc_filepath = os.path.join(ROOT_PATH, poc_filename)
+    poc_dirpath = os.path.join(ROOT_PATH, doc_name)
+    if not os.path.exists(poc_dirpath):
+        os.makedirs(poc_dirpath)
+        shutil.move(doc_filepath, poc_dirpath)
+        shutil.move(poc_filepath, poc_dirpath)
+        # shutil.copytree(paths.COMM_PATH, 'comm')
+        # shutil.move('comm', poa_dirname)
     else:
-        print_warning('[-] {dir} is exist'.format(dir=doc_name))
-        os.remove(poc_filename)
-        os.remove(doc_filename)
+        print_warning('[-] {dir} is exist'.format(dir=poc_dirpath))
+        os.remove(poc_filepath)
+        os.remove(doc_filepath)
     print_success('[+] poc_maker have finished')
-    return poc_filepath
+    return os.path.join(poc_dirpath, poc_name)
 
 
 def date_maker(words):
@@ -167,11 +173,11 @@ def read_info(words, poc_info_file):
 
 
 def main():
+    set_paths()
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', action='store_true', help='Make week report')
     parser.add_argument('--verify', help='Verify POC by directory eg. 0000_app_1.0_index.php_SQL-Injection')
-    parser.add_argument('-t', '--template', default='pocsuite', help='Choice the poc template')
-    parser.add_argument('-i', '--pocinfo', default=env.poc_info_name(), help='Choice the poc template')
+    parser.add_argument('-i', '--pocinfo', default=paths.INFO_PATH, help='Choice the poc template')
     args = parser.parse_args()
     if args.report:
         make_report()
@@ -181,7 +187,8 @@ def main():
         sys.exit(0)
 
     poc_info_file = args.pocinfo
-    poc_template_file, doc_template_file = env.get_template_file(args.template)
+    poc_template_file = paths.TEMPLATE_POC_PATH
+    doc_template_file = paths.TEMPLATE_DOC_PATH
 
     words = {}
     read_info(words, poc_info_file)
@@ -194,7 +201,8 @@ def main():
     poc_filepath = file_put_dir(poc_name, doc_name)
     check_weekdays()
     save_info(poc_info_file, doc_name)
-    verify_this_poc(poc_filepath, words)
+    if poc_filepath:
+        verify_this_poc(poc_filepath, words)
 
 
 if __name__ == "__main__":
