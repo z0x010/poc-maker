@@ -8,6 +8,9 @@ import zipfile
 import tempfile
 
 from lxml import etree
+from datetime import date
+from weekdays import weekdays
+
 from env import paths
 from print_status import *
 from check_info import check_info
@@ -15,9 +18,11 @@ from modify_template import modify_poc_template
 
 
 def file_maker(doc_name, poc_name, doc_template_file, poc_template_file, words):
+    date_maker(words)
     doc_maker(doc_name, words, doc_template_file)
     poc_maker(poc_name, words, poc_template_file)
     poc_filepath = file_put_dir(poc_name, doc_name)
+    check_weekdays()
     return poc_filepath
 
 
@@ -131,3 +136,15 @@ def read_poc_info(dict, poc_info_file):
     print_status('    [*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
     print_status('    [*] Vendor: {0}'.format(dict['appvendor']))
     return dict
+
+
+def date_maker(words):
+    today = str(date.today())
+    words['docdate'] = today.replace('-', '/')
+    words['pocdate'] = today
+
+
+def check_weekdays():
+    dirname = os.path.join(paths.ROOT_PATH, weekdays())
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)

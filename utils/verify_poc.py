@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import re
+import os
 import sys
-from os import path
 from print_status import *
 
 try:
@@ -23,8 +24,40 @@ default_header = {
 }
 
 
-def verify_poc(verify_path, verify_url):
-    poc_filename = path.basename(verify_path)
+def verify_poc(path, words):
+    if not words:
+        verify_this_poc_by_dir(path)
+    else:
+        verify_this_poc(path, words)
+
+
+def verify_this_poc(poc_filepath, words):
+    verify_require = [words['info_target_url'], words['info_test_url'], words['info_match']]
+    if all(verify_require):
+        verify_path = os.path.join(os.path.abspath('.'), poc_filepath)
+        verify(verify_path, verify_require[1])
+
+
+def verify_this_poc_by_dir(path):
+    files = os.listdir(path)
+    for _ in files:
+        if ('.py' in _) and ('.pyc' not in _):
+            poc_filename = _
+    verify_path = os.path.join(os.path.abspath(path), poc_filename)
+    poc_content = open(verify_path, 'r').read()
+    match = re.search('samples = \[(.*?)\]', poc_content)
+    if match:
+        verify_urls = match.group(1).split(',')
+        for _ in verify_urls:
+            verify_url = _.strip('\'\" ')
+            if verify_url:
+                verify(verify_path, verify_url)
+    else:
+        print_error('[-] can\'t read test_url in {name}'.format(name=poc_filename))
+
+
+def verify(verify_path, verify_url):
+    poc_filename = os.path.basename(verify_path)
     separator = '=' * 40
     print separator
     print_status('[*] Verify POC {name} on {url}:'.format(name=poc_filename, url=verify_url))
@@ -41,6 +74,6 @@ def verify_poc(verify_path, verify_url):
                     print '    [*] %s : %s' % (kk, vv)
         else:
             print '    [*] %s : %s' % (k, v)
-        print_success('[+] Verify POC finished')
+        print_success('[+] Verify POC have finished')
     else:
         print_error('[-] Verify POC failed, please manual verify')

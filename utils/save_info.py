@@ -22,6 +22,6 @@ def save_info(info_file, poc_name):
     try:
         shutil.copyfile(info_file, saved_file)
     except Exception, e:
-        print_warning('    [-] save poc_info failed')
+        print_warning('    [-] save_info failed')
     else:
-        print_success('[+]save poc_info success')
+        print_success('[+] save_info have finished')

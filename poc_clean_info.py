@@ -3,12 +3,14 @@
 # flsf 2014.9.22
 
 import re
+import os
 import sys
 import requests
 import argparse
 from bs4 import BeautifulSoup
 
 from utils.print_status import *
+from utils.env import module_path
 
 
 MYNAME = u'flsf'
@@ -218,13 +220,14 @@ def clean_info(args):
     if args.appversion:
         info_words['appversion'] = args.appversion
 
-    f = open('poc_info.txt', 'w')
+    info_file = os.path.join(module_path(), 'poc_info.txt')
+    f = open(info_file, 'w')
     info = generate_info(info_temp, info_words)
-    print_status('[*] poc_info\n')
+    print_status('[*] poc_info {file}\n'.format(file=info_file))
     print info
     f.write(info.encode('utf-8'))
     f.close()
-    print_status('[+] clean finish')
+    print_status('[+] poc_clean_info have finished')
 
 
 def trans_tools(tool):
