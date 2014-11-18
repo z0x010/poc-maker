@@ -150,6 +150,7 @@ def check_site(url):
         SITE = 'exp-db'
         read_from_expdb(url)
 
+
 def read_from_wooyun(url):
     info = read_info_content(url)
     vultype = read_vultype(info)

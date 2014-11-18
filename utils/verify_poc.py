@@ -44,5 +44,3 @@ def verify_poc(verify_path, verify_url):
         print_success('[+] Verify POC finished')
     else:
         print_error('[-] Verify POC failed, please manual verify')
-
-

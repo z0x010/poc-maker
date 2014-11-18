@@ -65,6 +65,7 @@ def cur_file_dir():
 
 
 class AttribDict(dict):
+
     def __init__(self, indict=None, attribute=None):
         if indict is None:
             indict = {}
