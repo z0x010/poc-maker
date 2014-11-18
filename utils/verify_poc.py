@@ -26,6 +26,7 @@ default_header = {
 def verify_poc(verify_path, verify_url):
     poc_filename = path.basename(verify_path)
     separator = '=' * 40
+    print separator
     print_status('[*] Verify POC {name} on {url}:'.format(name=poc_filename, url=verify_url))
     try:
         poc = get_poc_object(verify_path)
@@ -34,12 +35,14 @@ def verify_poc(verify_path, verify_url):
 
     result = poc.execute(verify_url, default_header, mode='verify', verbose=True)
     if result.status == 1:
-        print_success('[+] Verify POC finished')
         for k, v in result.result.items():
             if isinstance(v, dict):
                 for kk, vv in v.items():
                     print '    [*] %s : %s' % (kk, vv)
         else:
             print '    [*] %s : %s' % (k, v)
+        print_success('[+] Verify POC finished')
     else:
         print_error('[-] Verify POC failed, please manual verify')
+
+

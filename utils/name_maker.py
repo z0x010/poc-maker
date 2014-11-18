@@ -20,7 +20,7 @@ def doc_name_maker(words):
     vul_id = words['vulid']
     if not vul_id:
         vul_id = '0000'
-    app_name = words['appname'].replace(' ', '-')
+    app_name = words['appname'].replace(' ', '-').replace('.', '-')
     vulname_list.append(app_name)
     if words['appversion']:
         app_version = words['appversion'].replace(' ', '-')
@@ -39,11 +39,7 @@ def poc_name_maker(words):
     if not vul_id:
         vul_id = '0000'
     vulname_list.append(vul_id)
-    app_name = words['appname']
-    if '-' in app_name:
-        app_name = app_name.replace('-', '_')
-    if ' ' in app_name:
-        app_name = app_name.replace(' ', '_')
+    app_name = words['appname'].replace('-', '_').replace('.', '_').replace(' ', '_')
     vulname_list.append(app_name)
     if words['appversion']:
         app_version = words['appversion'].replace('.', '_')

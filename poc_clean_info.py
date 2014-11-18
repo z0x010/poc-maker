@@ -13,7 +13,7 @@ from utils.print_status import *
 
 MYNAME = u'flsf'
 SHORTNAME = u'flsf'
-VULDATE = u'2014-09-'
+VULDATE = u'2014-10-'
 
 
 info_temp = u"""appname    := {{ appname }}
@@ -150,7 +150,6 @@ def check_site(url):
         SITE = 'exp-db'
         read_from_expdb(url)
 
-
 def read_from_wooyun(url):
     info = read_info_content(url)
     vultype = read_vultype(info)
@@ -231,6 +230,7 @@ def trans_tools(tool):
     key_dic = {
         'sqlmap': u'SQL注入测试工具',
         'firefox': u'浏览器',
+        'curl': u'文件传输工具',
     }
     return key_dic.get(tool.lower(), '')
 
