@@ -62,9 +62,12 @@ def file_put_dir(poc_name, doc_name):
         # shutil.copytree(paths.COMM_PATH, 'comm')
         # shutil.move('comm', poa_dirname)
     else:
-        print_warning('[-] {dir} is exist'.format(dir=poc_dirpath))
+        print_warning('[-] {dir} exist, it will be replaced'.format(dir=poc_dirpath))
+        shutil.copyfile(poc_filepath, os.path.join(poc_dirpath, poc_filename))
+        shutil.copyfile(doc_filepath, os.path.join(poc_dirpath, doc_filename))
         os.remove(poc_filepath)
         os.remove(doc_filepath)
+
     print_success('[+] poc_maker have finished')
     return os.path.join(poc_dirpath, poc_name)
 
