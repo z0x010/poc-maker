@@ -124,20 +124,20 @@ def multiple_replace(text, adict):
 
 
 def read_info(words, poc_info_file):
+    print_status('[*] reading poc_info')
     read_poc_info(words, poc_info_file)
+    print_status('    [*] Name: {0} {1} {2}'.format(words['appname'], words['appversion'], words['vultype']))
+    print_status('    [*] Vendor: {0}'.format(words['appvendor']))
     check_info(words)
 
 
 def read_poc_info(dict, poc_info_file):
-    print_status('[*] reading poc_info')
     for line in open(poc_info_file):
         if ':=' in line:
             key, word = line.split(':=')
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
     modify_poc_template(dict)
-    print_status('    [*] Name: {0} {1} {2}'.format(dict['appname'], dict['appversion'], dict['vultype']))
-    print_status('    [*] Vendor: {0}'.format(dict['appvendor']))
     return dict
 
 

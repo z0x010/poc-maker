@@ -15,12 +15,12 @@ from utils.env import module_path
 
 MYNAME = u'flsf'
 SHORTNAME = u'flsf'
-VULDATE = u'2014-10-'
+VULDATE = u'2014-09-'
 
 
 info_temp = u"""appname    := {{ appname }}
 appversion := {{ appversion }}
-appvendor  := {{ vulvendor }}
+appvendor  := {{ appvendor }}
 
 vulid      := {{ vulid }}
 vulpath    := {{ vulpath }}
@@ -33,24 +33,24 @@ vuldate    := {{ vuldate }}
 
 
 tools      := {{ tools }}
-tooldesc   := {{ toolsdesc }}
+tooldesc   := {{ tooldesc }}
 
 myname     := {{ myname }}
 shortname  := {{ shortname }}
 
 
 # verify
-info_target_url := {{ target_url }}
-info_post_data  := {{ post_data }}
-info_match      := {{ match }}
-info_other_match:= {{ match_other }}
-info_test_url   := {{ test_url }}
+info_target_url := {{ info_target_url }}
+info_post_data  := {{ info_post_data }}
+info_match      := {{ info_match }}
+info_other_match:= {{ info_other_match }}
+info_test_url   := {{ info_test_url }}
 """
 
 
 SITE = ''
 info_words = {'appname': '', 'vuldate': VULDATE, 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '',
-              'vulvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'toolsdesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'target_url': '', 'post_data': '', 'match': '', 'match_other': '', 'test_url': '', 'appversion': '', 'vulpath': ''}
+              'appvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'tooldesc': '', 'myname': MYNAME, 'shortname': SHORTNAME, 'info_target_url': '', 'info_post_data': '', 'info_match': '', 'info_other_match': '', 'info_test_url': '', 'appversion': '', 'vulpath': ''}
 
 sql_list = [u'SQL Injection', u'SQL注射']
 file_down_list = [u'Arbitrary File Download', u'任意文件遍历/下载']
@@ -126,12 +126,12 @@ def read_vulvendor(info):
         soup = BeautifulSoup(content)
         try:
             url_info = soup.find("div", class_="content").h3.string
-            vulvendor = re.search('http.*', url_info).group(0)
+            appvendor = re.search('http.*', url_info).group(0)
         except Exception, e:
-            vulvendor = ''
+            appvendor = ''
     elif SITE == 'exp-db':
         pass
-    return vulvendor
+    return appvendor
 
 
 def read_vuldate(info):
@@ -156,12 +156,12 @@ def check_site(url):
 def read_from_wooyun(url):
     info = read_info_content(url)
     vultype = read_vultype(info)
-    vulvendor = read_vulvendor(info)
+    appvendor = read_vulvendor(info)
     vuldate = read_vuldate(info)
     vuleffect = trans_vuleffect(vultype)
     vulreferer = url
     info_words['vultype'] = vultype
-    info_words['vulvendor'] = vulvendor
+    info_words['appvendor'] = appvendor
     info_words['vuldate'] = vuldate
     info_words['vulreferer'] = url
     info_words['vuleffect'] = vuleffect
@@ -202,19 +202,19 @@ def clean_info(args):
         info_words['vulid'] = id
     if args.vultool:
         info_words['tools'] = args.vultool
-        info_words['toolsdesc'] = trans_tools(args.vultool)
+        info_words['tooldesc'] = trans_tools(args.vultool)
     if args.vuldesc:
         info_words['vuldesc'] = args.vuldesc.decode('utf-8')
     if args.target_url:
-        info_words['target_url'] = args.target_url
+        info_words['info_target_url'] = args.target_url
     if args.data:
-        info_words['post_data'] = args.data
+        info_words['info_post_data'] = args.data
     if args.match:
-        info_words['match'] = args.match
+        info_words['info_match'] = args.match
     if args.match_other:
-        info_words['match_other'] = args.match_other
+        info_words['info_other_match'] = args.match_other
     if args.test_url:
-        info_words['test_url'] = args.test_url
+        info_words['info_test_url'] = args.test_url
     if args.vulpath:
         info_words['vulpath'] = args.vulpath
     if args.appversion:
