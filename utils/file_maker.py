@@ -131,13 +131,14 @@ def read_info(words, poc_info_file):
     check_info(words)
 
 
-def read_poc_info(dict, poc_info_file):
+def read_poc_info(dict, poc_info_file, modify=True):
     for line in open(poc_info_file):
         if ':=' in line:
             key, word = line.split(':=')
             key = key.strip()
             dict[key] = word.strip().decode('utf-8')
-    modify_poc_template(dict)
+    if modify:
+        modify_poc_template(dict)
     return dict
 
 

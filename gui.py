@@ -151,7 +151,7 @@ class App(wx.App):
 
 
     def read_info(self):
-        read_poc_info(self.words, paths.INFO_PATH)
+        read_poc_info(self.words, paths.INFO_PATH, modify=False)
         for key in self.words:
             textctrl = wx.FindWindowByName(key)
             try:
