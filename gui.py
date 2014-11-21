@@ -3,11 +3,14 @@
 
 import wx
 
+from datetime import date
+
 from poc_maker import poc_maker
-from poc_clean_info import generate_info, info_temp
+from poc_clean_info import generate_info, info_temp, check_site
 from utils.file_maker import read_poc_info
 from utils.env import paths
 from utils.env import set_paths
+from utils.weekdays import weekdays
 
 
 
@@ -17,7 +20,7 @@ class InfoFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, "poc_maker")
         panel = wx.Panel(self)
 
-        top_lbl = wx.StaticText(panel, -1, "POC MAKER")
+        top_lbl = wx.StaticText(panel, -1, "POC MAKER: " + weekdays().replace(':', '/'))
         top_lbl.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
 
         appname_lbl = wx.StaticText(panel, -1, "*appname:")
@@ -61,6 +64,9 @@ class InfoFrame(wx.Frame):
 
         make_btn = wx.Button(panel, -1, "Maker", name="poc_maker")
         clean_btn = wx.Button(panel, -1, "Clean", name="poc_clean_info")
+        loadinfo_btn = wx.Button(panel, -1, "Load", name="load_poc_info")
+        writeinfo_btn = wx.Button(panel, -1, "Write", name="write_poc_info")
+        url_btn = wx.Button(panel, -1, "URL", name="read_from_url")
 
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -121,11 +127,14 @@ class InfoFrame(wx.Frame):
 
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        btnSizer.Add((20, 20), 1)
+        btnSizer.Add((10, 10), 1)
         btnSizer.Add(make_btn)
-        btnSizer.Add((20, 20), 1)
         btnSizer.Add(clean_btn)
-        btnSizer.Add((20, 20), 1)
+        btnSizer.Add((10, 10), 1)
+        btnSizer.Add(loadinfo_btn)
+        btnSizer.Add(writeinfo_btn)
+        btnSizer.Add(url_btn)
+        btnSizer.Add((10, 10), 1)
 
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.BOTTOM, 10)
 
@@ -146,6 +155,9 @@ class App(wx.App):
         self.frame.Show()
         self.frame.Bind(wx.EVT_BUTTON, self.make_click, wx.FindWindowByName('poc_maker'))
         self.frame.Bind(wx.EVT_BUTTON, self.clean_click, wx.FindWindowByName('poc_clean_info'))
+        self.frame.Bind(wx.EVT_BUTTON, self.load_click, wx.FindWindowByName('load_poc_info'))
+        self.frame.Bind(wx.EVT_BUTTON, self.write_click, wx.FindWindowByName('write_poc_info'))
+        self.frame.Bind(wx.EVT_BUTTON, self.url_click, wx.FindWindowByName('read_from_url'))
         self.read_info()
         return True
 
@@ -162,25 +174,80 @@ class App(wx.App):
 
 
     def make_click(self, event):
-        for key in self.words:
-            textctrl = wx.FindWindowByName(key)
-            value = textctrl.GetValue()
-            self.words[key] = value
-
-        info_words = self.words
-        info_file = paths.INFO_PATH
-        f = open(info_file, 'w')
-        info = generate_info(info_temp, info_words)
-        f.write(info.encode('utf-8'))
-        f.close()
-
+        info_file = self.write_info()
         poc_maker(info_file, self.words)
 
 
     def clean_click(self, event):
+        default_key = ['tools', 'tooldesc', 'myname', 'shortname']
         for key in self.words:
+            if key not in default_key:
+                textctrl = wx.FindWindowByName(key)
+                textctrl.Clear()
+        textctrl = wx.FindWindowByName('vuldate')
+        textctrl.AppendText(str(date.today()))
+
+
+    def load_click(self, event):
+        self.read_info()
+
+
+    def write_click(self, event):
+        self.write_info()
+
+    
+    def url_click(self, event):
+        dialog = wx.TextEntryDialog(None, "Please entry url", "Read info from url", "")
+        if dialog.ShowModal() == wx.ID_OK:
+            progress = wx.ProgressDialog("A progress box", "Time remaining", 10, style=wx.PD_AUTO_HIDE)
+            progress.Update(6)
+            url = dialog.GetValue()
+            self.words = check_site(url)
+            progress.Update(10)
+          
+            for key in self.words:
+                textctrl = wx.FindWindowByName(key)
+                try:
+                    textctrl.Clear()
+                except AttributeError:
+                    pass
+                textctrl.AppendText(self.words[key])
+
+
+    def write_info(self):
+        error = self.check_info()
+        if not error:
+            for key in self.words:
+                textctrl = wx.FindWindowByName(key)
+                value = textctrl.GetValue()
+                self.words[key] = value
+
+            info_words = self.words
+            info_file = paths.INFO_PATH
+            f = open(info_file, 'w')
+            info = generate_info(info_temp, info_words)
+            f.write(info.encode('utf-8'))
+            f.close()
+            return info_file
+        else:
+            wx.MessageBox("Some info must be provided", "Error")
+
+
+    def check_info(self):
+        error_list = ['appname', 'vultype', 'vulpath', 'appvendor', 'vulreferer', 'vuldesc', 'vuleffect', 'vuldate', 'myname', 'shortname']
+        error = False
+        for key in error_list:
             textctrl = wx.FindWindowByName(key)
-            textctrl.Clear()
+            value = textctrl.GetValue()
+            if not value:
+                textctrl.SetBackgroundColour("pink")
+                textctrl.Refresh()
+                error = True
+            else:
+                textctrl.SetBackgroundColour(wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOW))
+                textctrl.Refresh()
+
+        return error
 
 
 if __name__ == "__main__":

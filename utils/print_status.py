@@ -8,7 +8,6 @@ def print_status(status):
 
 def print_error(error):
     print colored(error, 'red')
-    sys.exit(0)
 
 
 def print_warning(warning):

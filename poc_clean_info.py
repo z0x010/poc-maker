@@ -8,6 +8,7 @@ import sys
 import requests
 import argparse
 from bs4 import BeautifulSoup
+from datetime import date
 
 from utils.print_status import *
 from utils.env import module_path
@@ -15,7 +16,7 @@ from utils.env import module_path
 
 MYNAME = u'flsf'
 SHORTNAME = u'flsf'
-VULDATE = u'2014-09-'
+VULDATE = str(date.today())
 
 
 info_temp = u"""appname    := {{ appname }}
@@ -76,7 +77,7 @@ def generate_info(template, context):
 
 def read_info_content(url):
     print_status('[*] read info from ' + url)
-    content = requests.get(url, timeout=3).content
+    content = requests.get(url, timeout=5).content
     if SITE == 'wooyun':
         soup = BeautifulSoup(content)
         info_list = soup.find("div", class_="content").find_all("h3")
@@ -122,7 +123,7 @@ def read_vultype(info):
 def read_vulvendor(info):
     if SITE == 'wooyun':
         vendor_info = info[2].a.get("href").encode("utf-8")
-        content = requests.get(vendor_info, timeout=3).content
+        content = requests.get(vendor_info, timeout=5).content
         soup = BeautifulSoup(content)
         try:
             url_info = soup.find("div", class_="content").h3.string
@@ -151,6 +152,7 @@ def check_site(url):
     elif 'exploit-db' in url:
         SITE = 'exp-db'
         read_from_expdb(url)
+    return info_words
 
 
 def read_from_wooyun(url):
@@ -168,7 +170,7 @@ def read_from_wooyun(url):
 
 
 def read_expdb_title(url):
-    title_info = requests.get(url, timeout=3).content
+    title_info = requests.get(url, timeout=5).content
     return title_info.decode('utf-8')
 
 
