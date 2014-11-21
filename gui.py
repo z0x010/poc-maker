@@ -13,7 +13,6 @@ from utils.env import set_paths
 from utils.weekdays import weekdays
 
 
-
 class InfoFrame(wx.Frame):
 
     def __init__(self):
@@ -68,11 +67,9 @@ class InfoFrame(wx.Frame):
         writeinfo_btn = wx.Button(panel, -1, "Write", name="write_poc_info")
         url_btn = wx.Button(panel, -1, "URL", name="read_from_url")
 
-
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         mainSizer.Add(top_lbl, 0, wx.ALL, 5)
         mainSizer.Add(wx.StaticLine(panel), 0, wx.EXPAND | wx.TOP | wx.BOTTOM, 5)
-
 
         infoSizer = wx.FlexGridSizer(cols=2, hgap=5, vgap=5)
         infoSizer.AddGrowableCol(1)
@@ -125,7 +122,6 @@ class InfoFrame(wx.Frame):
 
         mainSizer.Add(infoSizer, 0, wx.EXPAND | wx.ALL, 10)
 
-
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         btnSizer.Add((10, 10), 1)
         btnSizer.Add(make_btn)
@@ -138,7 +134,6 @@ class InfoFrame(wx.Frame):
 
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.BOTTOM, 10)
 
-
         panel.SetSizer(mainSizer)
 
         mainSizer.Fit(self)
@@ -147,7 +142,8 @@ class InfoFrame(wx.Frame):
 
 class App(wx.App):
 
-    words = {'appname': '', 'vuldate': '', 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '', 'appvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'tooldesc': '', 'myname': '', 'shortname': '', 'info_target_url': '', 'info_post_data': '', 'info_match': '', 'info_other_match': '', 'info_test_url': '', 'appversion': '', 'vulpath': ''} 
+    words = {'appname': '', 'vuldate': '', 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '', 'appvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'tooldesc': '',
+             'myname': '', 'shortname': '', 'info_target_url': '', 'info_post_data': '', 'info_match': '', 'info_other_match': '', 'info_test_url': '', 'appversion': '', 'vulpath': ''}
 
     def OnInit(self):
         set_paths()
@@ -161,7 +157,6 @@ class App(wx.App):
         self.read_info()
         return True
 
-
     def read_info(self):
         read_poc_info(self.words, paths.INFO_PATH, modify=False)
         for key in self.words:
@@ -172,11 +167,9 @@ class App(wx.App):
                 pass
             textctrl.AppendText(self.words[key])
 
-
     def make_click(self, event):
         info_file = self.write_info()
         poc_maker(info_file, self.words)
-
 
     def clean_click(self, event):
         default_key = ['tools', 'tooldesc', 'myname', 'shortname']
@@ -187,24 +180,21 @@ class App(wx.App):
         textctrl = wx.FindWindowByName('vuldate')
         textctrl.AppendText(str(date.today()))
 
-
     def load_click(self, event):
         self.read_info()
-
 
     def write_click(self, event):
         self.write_info()
 
-    
     def url_click(self, event):
         dialog = wx.TextEntryDialog(None, "Please entry url", "Read info from url", "")
         if dialog.ShowModal() == wx.ID_OK:
-            progress = wx.ProgressDialog("A progress box", "Time remaining", 10, style=wx.PD_AUTO_HIDE)
+            progress = wx.ProgressDialog("Read info from url", "Reading...", 10, style=wx.PD_AUTO_HIDE)
             progress.Update(6)
             url = dialog.GetValue()
             self.words = check_site(url)
             progress.Update(10)
-          
+
             for key in self.words:
                 textctrl = wx.FindWindowByName(key)
                 try:
@@ -212,7 +202,6 @@ class App(wx.App):
                 except AttributeError:
                     pass
                 textctrl.AppendText(self.words[key])
-
 
     def write_info(self):
         error = self.check_info()
@@ -231,7 +220,6 @@ class App(wx.App):
             return info_file
         else:
             wx.MessageBox("Some info must be provided", "Error")
-
 
     def check_info(self):
         error_list = ['appname', 'vultype', 'vulpath', 'appvendor', 'vulreferer', 'vuldesc', 'vuleffect', 'vuldate', 'myname', 'shortname']
