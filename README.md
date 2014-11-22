@@ -111,3 +111,4 @@ poc maker
 * 13.增加自动verify poc,仅当poc_info.txt中提供target-url,match,test-url时
 * 14.poc_maker.py 增加--verify,用于手动验证POC
 * 15.增加poc_info.txt 备份
+* 16.增加gui(最好不用)
