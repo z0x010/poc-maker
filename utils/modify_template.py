@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from urlparse import urljoin
 
 def modify_poc_template(words):
     if words['info_post_data']:
@@ -17,3 +18,11 @@ def modify_poc_template(words):
         words['info_other_match'] = u'match_other = re.search(\'{match}\', content)\n\n        if match and match_other:'.format(match=words['info_other_match'])
     else:
         words['info_other_match'] = u'\n        if match:'
+    if words['info_target_url']:
+        if words['info_test_url']:
+            if words['info_target_url'].startswith(words['info_test_url']):
+                words['info_target_url'] = words['info_target_url'][len(words['info_test_url']):]
+        elif words['info_target_url'].startswith('http'):
+            words['info_target_url'] = '/'.join(words['info_target_url'].split('/')[3:])
+        if words['info_target_url'][0] != '/':
+            words['info_target_url'] = '/' + words['info_target_url']
