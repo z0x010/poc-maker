@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from urlparse import urljoin
+from urllib import quote
 
 def modify_poc_template(words):
     if words['info_post_data']:
@@ -19,10 +19,20 @@ def modify_poc_template(words):
     else:
         words['info_other_match'] = u'\n        if match:'
     if words['info_target_url']:
+        target_url = words['info_target_url']
+        if ' ' in target_url:
+            target_url = quote(target_url)
         if words['info_test_url']:
-            if words['info_target_url'].startswith(words['info_test_url']):
-                words['info_target_url'] = words['info_target_url'][len(words['info_test_url']):]
-        elif words['info_target_url'].startswith('http'):
-            words['info_target_url'] = '/'.join(words['info_target_url'].split('/')[3:])
-        if words['info_target_url'][0] != '/':
-            words['info_target_url'] = '/' + words['info_target_url']
+            if target_url.startswith(words['info_test_url']):
+                target_url = target_url[len(words['info_test_url']):]
+        elif target_url.startswith('http'):
+            target_url = '/'.join(target_url.split('/')[3:])
+        if target_url[0] != '/':
+            target_url = '/' + target_url
+        words['info_target_url'] = target_url
+    if words['vuldesc']:
+        blank = ' ' * 11
+        vuldesc = words['vuldesc'].encode('gbk')
+        result = [blank + vuldesc[i:i+70] for i in range(0, len(vuldesc), 70)]
+        words['vuldesc'] = '\n'.join(result).decode('gbk')
+

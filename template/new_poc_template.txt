@@ -22,7 +22,7 @@ class TestPOC(POCBase):
     appVersion = 'appversion'
     vulType = 'vultype'
     desc = '''
-           vuldesc
+vuldesc
     '''
     # the sample sites for examine
     samples = ['info_test_url', '']
