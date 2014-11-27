@@ -33,6 +33,6 @@ def modify_poc_template(words):
     if words['vuldesc']:
         blank = ' ' * 11
         vuldesc = words['vuldesc'].encode('gbk')
-        result = [blank + vuldesc[i:i+70] for i in range(0, len(vuldesc), 70)]
+        n = 71 if len(vuldesc) % 2 else 70 # 喝喝
+        result = [blank + vuldesc[i:i+n] for i in range(0, len(vuldesc), n)]
         words['vuldesc'] = '\n'.join(result).decode('gbk')
-
