@@ -15,6 +15,9 @@ from utils.weekdays import weekdays
 
 class InfoFrame(wx.Frame):
 
+    type_list = ['SQL Injection', 'Arbitrary File Download', 'File Upload', 'Command Execution', 'Code Execution', 'Remote File Inclusion', 'Local File Inclusion' 'Privilege Escalation', 'Arbitrary File Deletion', 'Directory Traversal', 'Login Bypass', 'Weak Password', 'Information Disclosure']
+    tool_list = ['sqlmap', 'Firefox', 'curl']
+
     def __init__(self):
         wx.Frame.__init__(self, None, -1, "poc_maker")
         panel = wx.Panel(self)
@@ -33,7 +36,8 @@ class InfoFrame(wx.Frame):
         vulpath_lbl = wx.StaticText(panel, -1, "*vulpath:")
         vulpath = wx.TextCtrl(panel, -1, "", name="vulpath")
         vultype_lbl = wx.StaticText(panel, -1, "*vultype:")
-        vultype = wx.TextCtrl(panel, -1, "", name="vultype")
+        vultype = wx.ComboBox(panel, -1, "", (15, 30), wx.DefaultSize, self.type_list, wx.CB_DROPDOWN, name="vultype")
+        # vultype = wx.TextCtrl(panel, -1, "", name="vultype")
         vulreferer_lbl = wx.StaticText(panel, -1, "*vulreferer:")
         vulreferer = wx.TextCtrl(panel, -1, "", name="vulreferer")
         vuldesc_lbl = wx.StaticText(panel, -1, "*vuldesc:")
@@ -43,7 +47,8 @@ class InfoFrame(wx.Frame):
         vuldate_lbl = wx.StaticText(panel, -1, "*vuldate:")
         vuldate = wx.TextCtrl(panel, -1, "", name="vuldate")
         tools_lbl = wx.StaticText(panel, -1, "*tools:")
-        tools = wx.TextCtrl(panel, -1, "", name="tools")
+        tools = wx.ComboBox(panel, -1, "", (15, 30), wx.DefaultSize, self.tool_list, wx.CB_DROPDOWN, name="tools")
+        # tools = wx.TextCtrl(panel, -1, "", name="tools")
         tooldesc_lbl = wx.StaticText(panel, -1, "*tooldesc:")
         tooldesc = wx.TextCtrl(panel, -1, "", name="tooldesc")
         myname_lbl = wx.StaticText(panel, -1, "*myname:")
@@ -87,12 +92,12 @@ class InfoFrame(wx.Frame):
         infoSizer.Add(vulpath, 0, wx.EXPAND)
         infoSizer.Add(vultype_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         infoSizer.Add(vultype, 0, wx.EXPAND)
+        infoSizer.Add(vuleffect_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        infoSizer.Add(vuleffect, 0, wx.EXPAND)
         infoSizer.Add(vulreferer_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         infoSizer.Add(vulreferer, 0, wx.EXPAND)
         infoSizer.Add(vuldesc_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         infoSizer.Add(vuldesc, 0, wx.EXPAND)
-        infoSizer.Add(vuleffect_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        infoSizer.Add(vuleffect, 0, wx.EXPAND)
         infoSizer.Add(vuldate_lbl, 0, wx.ALIGN_RIGHT | wx.ALIGN_CENTER_VERTICAL)
         infoSizer.Add(vuldate, 0, wx.EXPAND)
         infoSizer.Add((10, 10))
@@ -140,6 +145,7 @@ class InfoFrame(wx.Frame):
         mainSizer.SetSizeHints(self)
 
 
+
 class App(wx.App):
 
     words = {'appname': '', 'vuldate': '', 'vuleffect': '', 'vuldesc': '', 'vultype': '', 'vulid': '', 'appvendor': '', 'vuldesc': '', 'vulreferer': '', 'tools': '', 'tooldesc': '',
@@ -154,6 +160,8 @@ class App(wx.App):
         self.frame.Bind(wx.EVT_BUTTON, self.load_click, wx.FindWindowByName('load_poc_info'))
         self.frame.Bind(wx.EVT_BUTTON, self.write_click, wx.FindWindowByName('write_poc_info'))
         self.frame.Bind(wx.EVT_BUTTON, self.url_click, wx.FindWindowByName('read_from_url'))
+        self.frame.Bind(wx.EVT_COMBOBOX, self.set_vuleffect, wx.FindWindowByName('vultype'))
+        self.frame.Bind(wx.EVT_COMBOBOX, self.set_tooldesc, wx.FindWindowByName('tools'))
         self.read_info()
         return True
 
@@ -161,18 +169,21 @@ class App(wx.App):
         read_poc_info(self.words, paths.INFO_PATH, modify=False)
         for key in self.words:
             textctrl = wx.FindWindowByName(key)
-            try:
-                textctrl.Clear()
-            except AttributeError:
-                pass
-            textctrl.AppendText(self.words[key])
+            if key not in ('vultype', 'tools'):
+                try:
+                    textctrl.Clear()
+                except AttributeError:
+                    pass
+                textctrl.AppendText(self.words[key])
+            else:
+                textctrl.SetValue(self.words[key])
 
     def make_click(self, event):
         info_file = self.write_info()
         poc_maker(info_file, self.words)
 
     def clean_click(self, event):
-        default_key = ['tools', 'tooldesc', 'myname', 'shortname']
+        default_key = ['vultype', 'vuleffect', 'tools', 'tooldesc', 'myname', 'shortname']
         for key in self.words:
             if key not in default_key:
                 textctrl = wx.FindWindowByName(key)
@@ -202,6 +213,27 @@ class App(wx.App):
                 except AttributeError:
                     pass
                 textctrl.AppendText(self.words[key])
+
+    def set_vuleffect(self, event):
+        vultype = wx.FindWindowByName('vultype')
+        vuleffect = wx.FindWindowByName('vuleffect')
+        effect = self.trans_type(vultype.GetValue())
+        try:
+            vuleffect.Clear()
+        except AttributeError:
+            pass
+        vuleffect.AppendText(effect)
+
+    
+    def set_tooldesc(self, event):
+        tools = wx.FindWindowByName('tools')
+        tooldesc = wx.FindWindowByName('tooldesc')
+        desc = self.trans_tools(tools.GetValue())
+        try:
+            tooldesc.Clear()
+        except AttributeError:
+            pass
+        tooldesc.AppendText(desc)
 
     def write_info(self):
         error = self.check_info()
@@ -236,6 +268,26 @@ class App(wx.App):
                 textctrl.Refresh()
 
         return error
+
+    def trans_tools(self, tool):
+        key_dic = {
+            'sqlmap': u'SQL注入测试工具',
+            'firefox': u'浏览器',
+            'curl': u'文件传输工具',
+        }
+
+        return key_dic.get(tool.lower(), '')
+
+    def trans_type(self, vultype):
+        key_dic = {
+            'SQL Injection': u'SQL注入,泄露信息',
+            'Arbitrary File Download': u'任意文件下载,泄露信息',
+            'Arbitrary File Deletion': u'任意文件删除',
+            'Login Bypass': u'登录绕过,权限绕过,非授权访问',
+            'File Upload': u'文件上传导致代码执行',
+        }
+
+        return key_dic.get(vultype, '')
 
 
 if __name__ == "__main__":
