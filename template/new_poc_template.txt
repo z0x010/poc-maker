@@ -30,16 +30,15 @@ vuldesc
 
 
     def _verify(self):
+        result = {}
+
         target_url = 'info_target_url'
         info_post_data
         content = response.content
         info_match
         info_other_match
-            result = {}
             result['VerifyInfo'] = {}
             result['VerifyInfo']['URL'] = self.url + target_url
-        else:
-            result = {}
 
         return self.parse_attack(result)
 
