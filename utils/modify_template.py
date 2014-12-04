@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from urllib import quote
+import string
 
 def modify_poc_template(words):
     if words['info_post_data']:
@@ -33,6 +34,19 @@ def modify_poc_template(words):
     if words['vuldesc']:
         blank = ' ' * 11
         vuldesc = words['vuldesc'].encode('gbk')
-        n = 71 if len(vuldesc) % 2 else 70 # 喝喝
-        result = [blank + vuldesc[i:i+n] for i in range(0, len(vuldesc), n)]
+        result = []
+        index = 0
+        while True:
+            n = 71 if printable_count(vuldesc[index:index+70]) % 2 else 70
+            result.append(blank + vuldesc[index:index+n])
+            index += n
+            if index > len(vuldesc):
+                break
         words['vuldesc'] = '\n'.join(result).decode('gbk')
+
+def printable_count(strs):
+    count = 0
+    for i in strs:
+        if i in string.printable:
+            count += 1
+    return count
