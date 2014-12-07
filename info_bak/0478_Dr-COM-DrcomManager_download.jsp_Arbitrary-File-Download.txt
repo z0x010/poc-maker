@@ -15,8 +15,8 @@ vuldate    := 2014-09-28
 tools      := curl
 tooldesc   := 文件传输工具
 
-myname     := 马健
-shortname  := maj
+myname     := flsf
+shortname  := flsf
 
 
 # verify
