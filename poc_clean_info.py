@@ -238,7 +238,7 @@ def trans_tools(tool):
         'firefox': u'浏览器',
         'curl': u'文件传输工具',
     }
-    return key_dic.get(tool.lower(), '')
+    return key_dic.get(tool.lower(), tool)
 
 
 def trans_vultype(vultype):
@@ -247,6 +247,8 @@ def trans_vultype(vultype):
         'sqli': 'SQL Injection',
         'upload': 'File Upload',
         'fileupload': 'File Upload',
+        'rfi': 'Remote File Inclusion',
+        'lfi': 'Local File Inclusion',
         'bypass': 'Login Bypass',
         'loginbypass': 'Login Bypass',
         'filedownload': 'Arbitrary File Download',
@@ -256,7 +258,7 @@ def trans_vultype(vultype):
         'filede': 'Arbitraty File Deletion',
         'xss': 'Cross Site Scripting',
     }
-    return key_dic.get(vultype.lower(), '')
+    return key_dic.get(vultype.lower(), vultype)
 
 
 def trans_vuleffect(vultype):
