@@ -10,6 +10,7 @@ from utils.env import set_paths
 from utils.verify_poc import verify_poc
 from utils.save_info import save_info
 from utils.name_maker import name_maker
+from utils.report_maker import make_report
 from utils.file_maker import file_maker, read_info
 
 
@@ -45,4 +46,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("[-] Ctrl-C pressed")
+
