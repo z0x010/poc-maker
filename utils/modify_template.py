@@ -8,11 +8,11 @@ def modify_poc_template(words):
     if words['info_post_data']:
         try:
             data_dict = dict([x.split('=', 1) for x in words['info_post_data'].split('&')])
-            words['info_post_data'] = u'payload = {data}\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data=data_dict)
+            words['info_post_data'] = u'payload = {data}\n        response = req.post(self.url + target_url, data=payload, headers=self.headers, timeout=10)'.format(data=data_dict)
         except ValueError:
-            words['info_post_data'] = u'payload = {data}\n        response = req.post(self.url + target_url, data=payload, timeout=10)'.format(data='')
+            words['info_post_data'] = u'payload = {data}\n        response = req.post(self.url + target_url, data=payload, headers=self.headers, timeout=10)'.format(data='')
     else:
-        words['info_post_data'] = u'\n        response = req.get(self.url + target_url, timeout=10)'
+        words['info_post_data'] = u'\n        response = req.get(self.url + target_url, headers=self.headers, timeout=10)'
     if words['info_match']:
         words['info_match'] = u'\n        match = re.search(\'{match}\', content)'.format(match=words['info_match'])
     if words['info_other_match']:
